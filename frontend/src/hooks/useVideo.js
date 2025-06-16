@@ -120,7 +120,8 @@ export const useVideo = () => {
 /**
  * Hook pour un lecteur vidéo complet avec gestion HLS
  */
-export const useVideoPlayer = (videoId, options = {}) => {
+export const useVideoPlayerComplete = (videoId, options = {}) => {
+
     const { autoplay = false, muted = false, controls = true } = options;
     const player = useVideoPlayer();
     const { currentVideo, loadVideo } = useCurrentVideo();

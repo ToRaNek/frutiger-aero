@@ -496,8 +496,6 @@ class AuthService {
 // Instance singleton du service d'authentification
 const authService = new AuthService();
 
-export default authService;
-
 // Export des types d'erreurs pour utilisation dans les composants
 export const AUTH_ERROR_TYPES = {
     VALIDATION_ERROR: 'VALIDATION_ERROR',
@@ -527,3 +525,6 @@ export const PERMISSIONS = {
     MANAGE_CONTENT: 'manage_content',
     VIEW_ANALYTICS: 'view_analytics'
 };
+
+export { authService };
+export default authService;

@@ -41,26 +41,28 @@ const pool = new Pool(dbConfig);
 
 // Gestion des événements du pool
 pool.on('connect', (client) => {
-    logger.debug(`Nouvelle connexion PostgreSQL établie: ${client.processID}`);
+    logger.debug(`Nouvelle connexion PostgreSQL établie: ${client?.processID || 'ID inconnu'}`);
 });
 
 pool.on('acquire', (client) => {
-    logger.debug(`Connexion PostgreSQL acquise: ${client.processID}`);
+    logger.debug(`Connexion PostgreSQL acquise: ${client?.processID || 'ID inconnu'}`);
 });
 
 pool.on('release', (client) => {
-    logger.debug(`Connexion PostgreSQL libérée: ${client.processID}`);
+    // Vérification de sécurité pour éviter l'erreur
+    const processId = client?.processID || 'ID inconnu';
+    logger.debug(`Connexion PostgreSQL libérée: ${processId}`);
 });
 
 pool.on('remove', (client) => {
-    logger.debug(`Connexion PostgreSQL supprimée: ${client.processID}`);
+    logger.debug(`Connexion PostgreSQL supprimée: ${client?.processID || 'ID inconnu'}`);
 });
 
 pool.on('error', (err, client) => {
     logger.error('Erreur PostgreSQL inattendue:', {
         error: err.message,
         stack: err.stack,
-        processID: client?.processID
+        processID: client?.processID || 'ID inconnu'
     });
 });
 

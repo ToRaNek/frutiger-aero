@@ -393,6 +393,6 @@ export const useAuthListener = (callbacks = {}) => {
 export const useIsAuthenticated = () => useAuthState().isAuthenticated;
 export const useCurrentAuthUser = () => useCurrentUser();
 export const useAuthPermissions = () => usePermissions();
-export const useAuthActions = () => useAuthActions();
+export const useAuthHelpers = () => useActions();
 
 export default useAuth;
