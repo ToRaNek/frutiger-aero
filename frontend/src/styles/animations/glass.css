@@ -1,0 +1,488 @@
+/* frontend/src/styles/animations/glass.css */
+
+/* ================================================
+   GLASSMORPHISM EFFECTS - FRUTIGER AERO
+   Effets de verre et transparence caractéristiques
+   ================================================ */
+
+/* Glassmorphism de base */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--frutiger-radius-xl);
+    box-shadow:
+            0 8px 32px rgba(31, 38, 135, 0.37),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Variations d'intensité du glassmorphism */
+.glass-subtle {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.2);
+}
+
+.glass-medium {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 6px 24px rgba(31, 38, 135, 0.3);
+}
+
+.glass-strong {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+            0 12px 40px rgba(31, 38, 135, 0.4),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Glassmorphism coloré avec teintes Frutiger Aero */
+.glass-blue {
+    background: rgba(0, 120, 200, 0.2);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(100, 200, 220, 0.3);
+    box-shadow:
+            0 8px 32px rgba(0, 120, 200, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.glass-cyan {
+    background: rgba(100, 200, 220, 0.25);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(177, 255, 216, 0.4);
+    box-shadow:
+            0 8px 32px rgba(100, 200, 220, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.glass-mint {
+    background: rgba(177, 255, 216, 0.2);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(177, 255, 216, 0.3);
+    box-shadow:
+            0 8px 32px rgba(177, 255, 216, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Glassmorphism sombre */
+.glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    color: var(--frutiger-white);
+}
+
+/* Effets de brillance sur le verre */
+.glass-shine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent);
+    animation: glass-shine 3s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Effet de reflet sur le verre */
+.glass-reflection::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.4),
+    transparent);
+    border-radius: var(--frutiger-radius-xl) var(--frutiger-radius-xl) 0 0;
+    pointer-events: none;
+}
+
+/* Glassmorphism avec animation de brouillard */
+.glass-fog {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(25px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-fog::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+            ellipse at center,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.05) 40%,
+            transparent 70%
+    );
+    animation: glass-fog-drift 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Effet de bulle de verre */
+.glass-bubble {
+    background: radial-gradient(
+            ellipse at 30% 30%,
+            rgba(255, 255, 255, 0.4) 0%,
+            rgba(255, 255, 255, 0.2) 40%,
+            rgba(255, 255, 255, 0.1) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--frutiger-radius-full);
+    box-shadow:
+            0 8px 32px rgba(31, 38, 135, 0.3),
+            inset 0 2px 4px rgba(255, 255, 255, 0.5),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Glassmorphism pour les cartes */
+.glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--frutiger-radius-xl);
+    padding: var(--frutiger-spacing-lg);
+    transition: var(--frutiger-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.8),
+    transparent);
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px);
+    box-shadow:
+            0 12px 40px rgba(31, 38, 135, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Glassmorphism pour les boutons */
+.glass-button {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--frutiger-radius-lg);
+    padding: 12px 24px;
+    color: var(--frutiger-deep-blue);
+    transition: var(--frutiger-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.3),
+    transparent);
+    border-radius: var(--frutiger-radius-lg) var(--frutiger-radius-lg) 0 0;
+    pointer-events: none;
+}
+
+.glass-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow:
+            0 8px 25px rgba(31, 38, 135, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.glass-button:active {
+    transform: translateY(0);
+    box-shadow:
+            0 4px 15px rgba(31, 38, 135, 0.3),
+            inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Glassmorphism pour les inputs */
+.glass-input {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--frutiger-radius-lg);
+    padding: 12px 16px;
+    color: var(--frutiger-deep-blue);
+    transition: var(--frutiger-transition);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.glass-input::placeholder {
+    color: rgba(0, 60, 120, 0.6);
+}
+
+.glass-input:focus {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(0, 120, 200, 0.5);
+    box-shadow:
+            inset 0 2px 4px rgba(0, 0, 0, 0.1),
+            0 0 0 3px rgba(0, 120, 200, 0.2);
+}
+
+/* Glassmorphism pour les modals */
+.glass-modal {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--frutiger-radius-2xl);
+    box-shadow:
+            0 20px 60px rgba(31, 38, 135, 0.4),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-modal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.2),
+    transparent);
+    pointer-events: none;
+}
+
+/* Glassmorphism pour les notifications */
+.glass-notification {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--frutiger-radius-lg);
+    box-shadow:
+            0 8px 32px rgba(31, 38, 135, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    animation: glass-notification-slide 0.3s ease-out;
+}
+
+/* Glassmorphism pour les tooltips */
+.glass-tooltip {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(15px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--frutiger-radius-md);
+    color: var(--frutiger-white);
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Glassmorphism avec effet de cristal */
+.glass-crystal {
+    background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.1) 100%);
+    backdrop-filter: blur(25px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+}
+
+.glass-crystal::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 30%;
+    height: 30%;
+    background: radial-gradient(
+            ellipse at center,
+            rgba(255, 255, 255, 0.4) 0%,
+            transparent 70%
+    );
+    border-radius: var(--frutiger-radius-full);
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+/* Effet de verre brisé décoratif */
+.glass-fractured {
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-fractured::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+            linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 42%, transparent 44%),
+            linear-gradient(-45deg, transparent 60%, rgba(255, 255, 255, 0.1) 62%, transparent 64%);
+    pointer-events: none;
+}
+
+/* Glassmorphism avec animation de condensation */
+.glass-condensation {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-condensation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+            radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+            radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.2) 2px, transparent 2px);
+    background-size: 30px 30px, 40px 40px, 50px 50px;
+    animation: glass-condensation-drift 10s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Keyframes pour les animations */
+@keyframes glass-shine {
+    0% { left: -100%; }
+    50% { left: 0%; }
+    100% { left: 100%; }
+}
+
+@keyframes glass-fog-drift {
+    0%, 100% {
+        transform: translate(-25%, -25%) rotate(0deg);
+    }
+    25% {
+        transform: translate(-20%, -30%) rotate(90deg);
+    }
+    50% {
+        transform: translate(-30%, -20%) rotate(180deg);
+    }
+    75% {
+        transform: translate(-35%, -25%) rotate(270deg);
+    }
+}
+
+@keyframes glass-notification-slide {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes glass-condensation-drift {
+    0%, 100% {
+        background-position: 0% 0%, 0% 0%, 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%, -100% 100%, 50% -50%;
+    }
+}
+
+/* États interactifs avancés */
+.glass-interactive:hover {
+    backdrop-filter: blur(30px) saturate(200%);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow:
+            0 12px 40px rgba(31, 38, 135, 0.4),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.glass-interactive:active {
+    backdrop-filter: blur(15px) saturate(150%);
+    transform: scale(0.98);
+}
+
+/* Responsive adaptations */
+@media (max-width: 768px) {
+    .glass-panel,
+    .glass-card,
+    .glass-modal {
+        backdrop-filter: blur(15px) saturate(150%);
+    }
+
+    .glass-strong {
+        backdrop-filter: blur(25px) saturate(180%);
+    }
+}
+
+/* Support pour les navigateurs sans backdrop-filter */
+@supports not (backdrop-filter: blur(20px)) {
+    .glass-panel,
+    .glass-card,
+    .glass-button,
+    .glass-input,
+    .glass-modal {
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .glass-dark {
+        background: rgba(0, 0, 0, 0.85);
+    }
+}
+
+/* Préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    .glass-shine::before,
+    .glass-fog::before,
+    .glass-condensation::before {
+        animation: none;
+    }
+}
+
+/* Classes utilitaires pour les variations */
+.glass-opacity-10 { background: rgba(255, 255, 255, 0.1); }
+.glass-opacity-20 { background: rgba(255, 255, 255, 0.2); }
+.glass-opacity-30 { background: rgba(255, 255, 255, 0.3); }
+.glass-opacity-40 { background: rgba(255, 255, 255, 0.4); }
+
+.glass-blur-sm { backdrop-filter: blur(10px); }
+.glass-blur-md { backdrop-filter: blur(20px); }
+.glass-blur-lg { backdrop-filter: blur(30px); }
+.glass-blur-xl { backdrop-filter: blur(40px); }
+
+.glass-border-subtle { border: 1px solid rgba(255, 255, 255, 0.1); }
+.glass-border-medium { border: 1px solid rgba(255, 255, 255, 0.2); }
+.glass-border-strong { border: 1px solid rgba(255, 255, 255, 0.3); }

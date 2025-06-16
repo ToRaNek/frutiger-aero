@@ -1,0 +1,502 @@
+/* frontend/src/styles/index.css */
+
+/* Reset et base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Variables CSS globales pour l'esthétique Frutiger Aero */
+:root {
+    /* Palette Frutiger Aero principale */
+    --frutiger-deep-blue: #003c78;
+    --frutiger-royal-blue: #0050a0;
+    --frutiger-bright-blue: #0064b4;
+    --frutiger-sky-blue: #0078c8;
+    --frutiger-cyan: #64c8dc;
+    --frutiger-mint: #b1ffd8;
+    --frutiger-white: #ffffff;
+    --frutiger-light-gray: #f8fafc;
+    --frutiger-gray: #e2e8f0;
+    --frutiger-dark-gray: #64748b;
+
+    /* Couleurs d'accent */
+    --frutiger-orange: #ff8c42;
+    --frutiger-yellow: #ffd700;
+    --frutiger-green: #22c55e;
+    --frutiger-pink: #ec4899;
+
+    /* Effets glassmorphism */
+    --frutiger-glass: rgba(255, 255, 255, 0.25);
+    --frutiger-glass-border: rgba(255, 255, 255, 0.18);
+    --frutiger-glass-dark: rgba(0, 0, 0, 0.1);
+    --frutiger-backdrop-blur: blur(20px);
+
+    /* Ombres Frutiger Aero */
+    --frutiger-shadow-sm: 0 2px 4px rgba(0, 60, 120, 0.05);
+    --frutiger-shadow: 0 4px 6px rgba(0, 60, 120, 0.1);
+    --frutiger-shadow-md: 0 8px 16px rgba(0, 60, 120, 0.15);
+    --frutiger-shadow-lg: 0 12px 24px rgba(0, 60, 120, 0.2);
+    --frutiger-shadow-xl: 0 16px 32px rgba(0, 60, 120, 0.25);
+
+    /* Gradients aurora */
+    --frutiger-gradient-primary: linear-gradient(135deg, var(--frutiger-bright-blue) 0%, var(--frutiger-cyan) 100%);
+    --frutiger-gradient-secondary: linear-gradient(135deg, var(--frutiger-sky-blue) 0%, var(--frutiger-mint) 100%);
+    --frutiger-gradient-aurora: linear-gradient(45deg, #32a6ff 0%, #3f6fff 49%, #8d54ff 82%);
+    --frutiger-gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+
+    /* Typography */
+    --frutiger-font-family: 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
+    --frutiger-font-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+
+    /* Espacements */
+    --frutiger-spacing-xs: 0.25rem;
+    --frutiger-spacing-sm: 0.5rem;
+    --frutiger-spacing-md: 1rem;
+    --frutiger-spacing-lg: 1.5rem;
+    --frutiger-spacing-xl: 2rem;
+    --frutiger-spacing-2xl: 3rem;
+
+    /* Border radius */
+    --frutiger-radius-sm: 8px;
+    --frutiger-radius-md: 12px;
+    --frutiger-radius-lg: 16px;
+    --frutiger-radius-xl: 20px;
+    --frutiger-radius-2xl: 24px;
+    --frutiger-radius-full: 9999px;
+
+    /* Transitions */
+    --frutiger-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --frutiger-transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --frutiger-transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Z-index layers */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+}
+
+/* Mode sombre (optionnel) */
+[data-theme="dark"] {
+    --frutiger-white: #0f172a;
+    --frutiger-light-gray: #1e293b;
+    --frutiger-gray: #334155;
+    --frutiger-dark-gray: #cbd5e1;
+    --frutiger-glass: rgba(0, 0, 0, 0.25);
+    --frutiger-glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Base HTML et body */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--frutiger-font-family);
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--frutiger-dark-gray);
+    background: var(--frutiger-light-gray);
+    min-height: 100vh;
+
+    /* Arrière-plan Aurora Frutiger Aero */
+    background: linear-gradient(135deg,
+    var(--frutiger-light-gray) 0%,
+    rgba(177, 255, 216, 0.1) 25%,
+    rgba(100, 200, 220, 0.1) 50%,
+    rgba(0, 120, 200, 0.05) 75%,
+    var(--frutiger-light-gray) 100%
+    );
+    background-attachment: fixed;
+}
+
+/* Conteneur principal de l'application */
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Liens */
+a {
+    color: var(--frutiger-bright-blue);
+    text-decoration: none;
+    transition: var(--frutiger-transition);
+}
+
+a:hover {
+    color: var(--frutiger-sky-blue);
+    text-decoration: underline;
+}
+
+a:focus {
+    outline: 2px solid var(--frutiger-bright-blue);
+    outline-offset: 2px;
+    border-radius: var(--frutiger-radius-sm);
+}
+
+/* Headings avec style Frutiger */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: var(--frutiger-spacing-md);
+    color: var(--frutiger-deep-blue);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 200;
+    background: var(--frutiger-gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 250;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+h5 {
+    font-size: 1.125rem;
+}
+
+h6 {
+    font-size: 1rem;
+}
+
+/* Paragraphes */
+p {
+    margin-bottom: var(--frutiger-spacing-md);
+    color: var(--frutiger-dark-gray);
+}
+
+/* Listes */
+ul, ol {
+    margin-left: var(--frutiger-spacing-lg);
+    margin-bottom: var(--frutiger-spacing-md);
+}
+
+li {
+    margin-bottom: var(--frutiger-spacing-xs);
+}
+
+/* Code */
+code {
+    font-family: var(--frutiger-font-mono);
+    background: var(--frutiger-glass);
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--frutiger-radius-sm);
+    font-size: 0.875rem;
+    border: 1px solid var(--frutiger-glass-border);
+}
+
+pre {
+    background: var(--frutiger-glass);
+    padding: var(--frutiger-spacing-md);
+    border-radius: var(--frutiger-radius-md);
+    overflow-x: auto;
+    border: 1px solid var(--frutiger-glass-border);
+    backdrop-filter: var(--frutiger-backdrop-blur);
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border: none;
+}
+
+/* Images et média */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--frutiger-radius-md);
+}
+
+video {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--frutiger-radius-lg);
+}
+
+/* Formulaires de base */
+input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* Focus visible pour l'accessibilité */
+*:focus-visible {
+    outline: 2px solid var(--frutiger-bright-blue);
+    outline-offset: 2px;
+}
+
+/* Scrollbars personnalisées Frutiger Aero */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--frutiger-glass);
+    border-radius: var(--frutiger-radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--frutiger-gradient-primary);
+    border-radius: var(--frutiger-radius-full);
+    box-shadow: var(--frutiger-shadow-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--frutiger-gradient-secondary);
+}
+
+/* Sélection de texte */
+::selection {
+    background: var(--frutiger-cyan);
+    color: var(--frutiger-white);
+}
+
+::-moz-selection {
+    background: var(--frutiger-cyan);
+    color: var(--frutiger-white);
+}
+
+/* Classes utilitaires Frutiger Aero */
+
+/* Glassmorphism */
+.frutiger-glass {
+    background: var(--frutiger-glass);
+    backdrop-filter: var(--frutiger-backdrop-blur);
+    border: 1px solid var(--frutiger-glass-border);
+    box-shadow: var(--frutiger-shadow-md);
+}
+
+.frutiger-glass-strong {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Gradients */
+.frutiger-gradient-bg {
+    background: var(--frutiger-gradient-primary);
+}
+
+.frutiger-gradient-text {
+    background: var(--frutiger-gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.frutiger-aurora-bg {
+    background: var(--frutiger-gradient-aurora);
+    background-size: 200% 200%;
+    animation: aurora-shift 10s ease-in-out infinite;
+}
+
+/* Ombres */
+.frutiger-shadow-sm { box-shadow: var(--frutiger-shadow-sm); }
+.frutiger-shadow { box-shadow: var(--frutiger-shadow); }
+.frutiger-shadow-md { box-shadow: var(--frutiger-shadow-md); }
+.frutiger-shadow-lg { box-shadow: var(--frutiger-shadow-lg); }
+.frutiger-shadow-xl { box-shadow: var(--frutiger-shadow-xl); }
+
+/* Transitions */
+.frutiger-transition {
+    transition: var(--frutiger-transition);
+}
+
+.frutiger-transition-slow {
+    transition: var(--frutiger-transition-slow);
+}
+
+.frutiger-transition-bounce {
+    transition: var(--frutiger-transition-bounce);
+}
+
+/* Layout helpers */
+.frutiger-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--frutiger-spacing-md);
+}
+
+.frutiger-container-wide {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 var(--frutiger-spacing-lg);
+}
+
+/* Flex helpers */
+.frutiger-flex {
+    display: flex;
+}
+
+.frutiger-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.frutiger-flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.frutiger-flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Grid helpers */
+.frutiger-grid {
+    display: grid;
+}
+
+.frutiger-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--frutiger-spacing-md);
+}
+
+.frutiger-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--frutiger-spacing-md);
+}
+
+.frutiger-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--frutiger-spacing-md);
+}
+
+/* Spacing */
+.frutiger-p-xs { padding: var(--frutiger-spacing-xs); }
+.frutiger-p-sm { padding: var(--frutiger-spacing-sm); }
+.frutiger-p-md { padding: var(--frutiger-spacing-md); }
+.frutiger-p-lg { padding: var(--frutiger-spacing-lg); }
+.frutiger-p-xl { padding: var(--frutiger-spacing-xl); }
+
+.frutiger-m-xs { margin: var(--frutiger-spacing-xs); }
+.frutiger-m-sm { margin: var(--frutiger-spacing-sm); }
+.frutiger-m-md { margin: var(--frutiger-spacing-md); }
+.frutiger-m-lg { margin: var(--frutiger-spacing-lg); }
+.frutiger-m-xl { margin: var(--frutiger-spacing-xl); }
+
+/* Border radius */
+.frutiger-rounded-sm { border-radius: var(--frutiger-radius-sm); }
+.frutiger-rounded-md { border-radius: var(--frutiger-radius-md); }
+.frutiger-rounded-lg { border-radius: var(--frutiger-radius-lg); }
+.frutiger-rounded-xl { border-radius: var(--frutiger-radius-xl); }
+.frutiger-rounded-full { border-radius: var(--frutiger-radius-full); }
+
+/* Text utilities */
+.frutiger-text-center { text-align: center; }
+.frutiger-text-left { text-align: left; }
+.frutiger-text-right { text-align: right; }
+
+.frutiger-text-xs { font-size: 0.75rem; }
+.frutiger-text-sm { font-size: 0.875rem; }
+.frutiger-text-base { font-size: 1rem; }
+.frutiger-text-lg { font-size: 1.125rem; }
+.frutiger-text-xl { font-size: 1.25rem; }
+.frutiger-text-2xl { font-size: 1.5rem; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    :root {
+        --frutiger-spacing-md: 0.75rem;
+        --frutiger-spacing-lg: 1rem;
+        --frutiger-spacing-xl: 1.5rem;
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.25rem; }
+
+    .frutiger-grid-3,
+    .frutiger-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .frutiger-container {
+        padding: 0 var(--frutiger-spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .frutiger-grid-2,
+    .frutiger-grid-3,
+    .frutiger-grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+}
+
+/* Print styles */
+@media print {
+    * {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* Reduced motion pour l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast pour l'accessibilité */
+@media (prefers-contrast: high) {
+    :root {
+        --frutiger-glass: rgba(255, 255, 255, 0.9);
+        --frutiger-glass-border: rgba(0, 0, 0, 0.3);
+    }
+
+    .frutiger-glass {
+        border-width: 2px;
+    }
+}

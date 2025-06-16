@@ -1,0 +1,479 @@
+/* frontend/src/styles/animations/aurora.css */
+
+/* ================================================
+   AURORA ANIMATIONS - FRUTIGER AERO
+   Effets d'aurora authentiques caractéristiques
+   ================================================ */
+
+/* Aurora de fond principal */
+.frutiger-aurora-bg {
+    background: linear-gradient(45deg,
+    #32a6ff 0%,
+    #3f6fff 25%,
+    #8d54ff 50%,
+    #3f6fff 75%,
+    #32a6ff 100%);
+    background-size: 400% 400%;
+    animation: aurora-shift 12s ease-in-out infinite;
+}
+
+/* Aurora plus subtile pour les cartes */
+.frutiger-aurora-subtle {
+    background: linear-gradient(135deg,
+    rgba(50, 166, 255, 0.1) 0%,
+    rgba(63, 111, 255, 0.15) 25%,
+    rgba(141, 84, 255, 0.1) 50%,
+    rgba(63, 111, 255, 0.15) 75%,
+    rgba(50, 166, 255, 0.1) 100%);
+    background-size: 300% 300%;
+    animation: aurora-shift-slow 15s ease-in-out infinite;
+}
+
+/* Aurora pour les textes */
+.frutiger-aurora-text {
+    background: linear-gradient(45deg,
+    #0078c8 0%,
+    #64c8dc 25%,
+    #b1ffd8 50%,
+    #64c8dc 75%,
+    #0078c8 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: aurora-text-shift 8s ease-in-out infinite;
+}
+
+/* Aurora pour les bordures */
+.frutiger-aurora-border {
+    position: relative;
+    border-radius: var(--frutiger-radius-lg);
+    background: var(--frutiger-glass);
+    backdrop-filter: var(--frutiger-backdrop-blur);
+}
+
+.frutiger-aurora-border::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+    #32a6ff,
+    #3f6fff,
+    #8d54ff,
+    #b1ffd8,
+    #64c8dc,
+    #32a6ff);
+    background-size: 300% 300%;
+    border-radius: var(--frutiger-radius-lg);
+    z-index: -1;
+    animation: aurora-border-shift 10s linear infinite;
+}
+
+/* Aurora boutons spéciaux */
+.frutiger-btn-aurora {
+    background: linear-gradient(135deg,
+    #32a6ff 0%,
+    #3f6fff 50%,
+    #8d54ff 100%);
+    background-size: 200% 200%;
+    color: var(--frutiger-white);
+    border: none;
+    animation: aurora-button 6s ease-in-out infinite;
+    box-shadow:
+            0 4px 15px rgba(63, 111, 255, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.frutiger-btn-aurora:hover {
+    animation-duration: 3s;
+    box-shadow:
+            0 6px 20px rgba(63, 111, 255, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Aurora pour les headers */
+.frutiger-header-aurora {
+    background: linear-gradient(90deg,
+    rgba(50, 166, 255, 0.8) 0%,
+    rgba(63, 111, 255, 0.9) 50%,
+    rgba(50, 166, 255, 0.8) 100%);
+    background-size: 200% 100%;
+    animation: aurora-header 8s ease-in-out infinite;
+    backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Aurora pour les overlays */
+.frutiger-overlay-aurora {
+    position: relative;
+    overflow: hidden;
+}
+
+.frutiger-overlay-aurora::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    rgba(177, 255, 216, 0.3),
+    rgba(100, 200, 220, 0.2),
+    transparent);
+    animation: aurora-sweep 4s ease-in-out infinite;
+}
+
+/* Aurora pour les progress bars */
+.frutiger-progress-aurora .frutiger-progress-bar {
+    background: linear-gradient(90deg,
+    #32a6ff 0%,
+    #3f6fff 50%,
+    #8d54ff 100%);
+    background-size: 200% 100%;
+    animation: aurora-progress 3s ease-in-out infinite;
+}
+
+/* Aurora pour les inputs focus */
+.frutiger-input-aurora:focus {
+    border-color: transparent;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow:
+            0 0 0 2px transparent,
+            0 0 20px rgba(63, 111, 255, 0.3),
+            inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: aurora-input-glow 2s ease-in-out infinite;
+}
+
+/* Aurora pour les loading spinners */
+.frutiger-loading-aurora {
+    width: 40px;
+    height: 40px;
+    border: 3px solid transparent;
+    border-radius: var(--frutiger-radius-full);
+    background: conic-gradient(
+            from 0deg,
+            #32a6ff,
+            #3f6fff,
+            #8d54ff,
+            #b1ffd8,
+            #64c8dc,
+            #32a6ff
+    );
+    animation: aurora-spin 1.5s linear infinite;
+    position: relative;
+}
+
+.frutiger-loading-aurora::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: var(--frutiger-white);
+    border-radius: var(--frutiger-radius-full);
+}
+
+/* Aurora pour les notifications */
+.frutiger-notification-aurora {
+    background: linear-gradient(135deg,
+    rgba(50, 166, 255, 0.9) 0%,
+    rgba(63, 111, 255, 0.9) 100%);
+    background-size: 200% 200%;
+    animation: aurora-notification 3s ease-in-out infinite;
+    color: var(--frutiger-white);
+    backdrop-filter: blur(20px);
+}
+
+/* Aurora pour les modals */
+.frutiger-modal-aurora {
+    background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(177, 255, 216, 0.2) 50%,
+    rgba(255, 255, 255, 0.4) 100%);
+    background-size: 300% 300%;
+    animation: aurora-modal 10s ease-in-out infinite;
+    backdrop-filter: blur(30px) saturate(150%);
+}
+
+/* Aurora hover effects */
+.frutiger-card-aurora:hover {
+    background: linear-gradient(135deg,
+    rgba(50, 166, 255, 0.2) 0%,
+    rgba(63, 111, 255, 0.25) 50%,
+    rgba(141, 84, 255, 0.2) 100%);
+    background-size: 200% 200%;
+    animation: aurora-hover 2s ease-in-out infinite;
+}
+
+/* Aurora pour les video players */
+.frutiger-video-aurora-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+            ellipse at center,
+            rgba(50, 166, 255, 0.1) 0%,
+            rgba(63, 111, 255, 0.05) 50%,
+            transparent 70%
+    );
+    animation: aurora-video-pulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* Aurora pour les liens actifs */
+.frutiger-link-aurora:hover,
+.frutiger-link-aurora.active {
+    background: linear-gradient(90deg,
+    #32a6ff 0%,
+    #3f6fff 50%,
+    #8d54ff 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: aurora-link 1.5s ease-in-out infinite;
+}
+
+/* Keyframes pour toutes les animations aurora */
+@keyframes aurora-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 50% 0%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    75% {
+        background-position: 50% 100%;
+    }
+}
+
+@keyframes aurora-shift-slow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    33% {
+        background-position: 100% 0%;
+    }
+    66% {
+        background-position: 0% 100%;
+    }
+}
+
+@keyframes aurora-text-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes aurora-border-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 300% 50%;
+    }
+}
+
+@keyframes aurora-button {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes aurora-header {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes aurora-sweep {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 0%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes aurora-progress {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes aurora-input-glow {
+    0%, 100% {
+        box-shadow:
+                0 0 0 2px rgba(50, 166, 255, 0.3),
+                0 0 20px rgba(63, 111, 255, 0.2),
+                inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        box-shadow:
+                0 0 0 2px rgba(141, 84, 255, 0.4),
+                0 0 20px rgba(177, 255, 216, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
+
+@keyframes aurora-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes aurora-notification {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes aurora-modal {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    33% {
+        background-position: 100% 0%;
+    }
+    66% {
+        background-position: 0% 100%;
+    }
+}
+
+@keyframes aurora-hover {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes aurora-video-pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes aurora-link {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Variations d'intensité */
+.frutiger-aurora-intense {
+    animation-duration: 4s !important;
+}
+
+.frutiger-aurora-gentle {
+    animation-duration: 20s !important;
+}
+
+.frutiger-aurora-fast {
+    animation-duration: 2s !important;
+}
+
+/* Aurora avec pause au hover */
+.frutiger-aurora-pause:hover {
+    animation-play-state: paused;
+}
+
+/* Aurora avec direction reverse */
+.frutiger-aurora-reverse {
+    animation-direction: reverse;
+}
+
+/* Aurora avec alternance */
+.frutiger-aurora-alternate {
+    animation-direction: alternate;
+}
+
+/* Responsive - Réduire les animations sur mobile */
+@media (max-width: 768px) {
+    .frutiger-aurora-bg,
+    .frutiger-aurora-subtle,
+    .frutiger-aurora-text {
+        animation-duration: 20s;
+    }
+}
+
+/* Respect des préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+    .frutiger-aurora-bg,
+    .frutiger-aurora-subtle,
+    .frutiger-aurora-text,
+    .frutiger-aurora-border::before,
+    .frutiger-btn-aurora,
+    .frutiger-header-aurora,
+    .frutiger-overlay-aurora::after,
+    .frutiger-progress-aurora .frutiger-progress-bar,
+    .frutiger-input-aurora:focus,
+    .frutiger-loading-aurora,
+    .frutiger-notification-aurora,
+    .frutiger-modal-aurora,
+    .frutiger-card-aurora:hover,
+    .frutiger-video-aurora-overlay,
+    .frutiger-link-aurora:hover {
+        animation: none !important;
+    }
+
+    /* Remplacer par des effets statiques */
+    .frutiger-aurora-bg {
+        background: var(--frutiger-gradient-primary);
+    }
+
+    .frutiger-aurora-text {
+        background: var(--frutiger-gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+}
+
+/* Classes d'aide pour contrôler les animations */
+.aurora-play { animation-play-state: running; }
+.aurora-pause { animation-play-state: paused; }
+.aurora-delay-1 { animation-delay: 0.5s; }
+.aurora-delay-2 { animation-delay: 1s; }
+.aurora-delay-3 { animation-delay: 1.5s; }
