@@ -514,8 +514,8 @@ export const useAuth = () => {
         // Actions
         ...actions,
 
-        // Getters
-        ...getters
+        // Getters - CORRECTION: Ajout des getters dans le retour
+        getters
     };
 };
 

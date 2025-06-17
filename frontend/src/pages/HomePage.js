@@ -29,8 +29,7 @@ import { useAuth } from '../hooks/useAuth';
 import { usePlaylist } from '../hooks/usePlaylist';
 
 // Utils
-import { formatRelativeTime, formatCompactNumber } from '../utils/formatters';
-import { debounce } from '../utils/helpers';
+import { formatRelativeTime, formatCompactNumber, formatDuration } from '../utils/formatters';
 
 /**
  * Page d'accueil avec vidéos tendances et recommandations personnalisées
@@ -45,24 +44,27 @@ const HomePage = () => {
 
     // Hooks
     const { user } = useAuth();
-    const {
-        videos,
-        trendingVideos,
-        searchResults,
-        categories,
-        isLoading,
-        error,
-        loadVideos,
-        loadTrendingVideos,
-        searchVideos
-    } = useVideo();
+
+    // Hooks avec gestion d'erreur et valeurs par défaut
+    const videoHook = useVideo();
+    const playlistHook = usePlaylist();
 
     const {
-        userPlaylists,
-        favorites,
-        watchLater,
-        watchHistory
-    } = usePlaylist();
+        videos = [],
+        trendingVideos = [],
+        categories = [],
+        isLoading = false,
+        error = null,
+        loadVideos = () => {},
+        loadTrendingVideos = () => {}
+    } = videoHook || {};
+
+    const {
+        userPlaylists = [],
+        favorites = [],
+        watchLater = [],
+        watchHistory = []
+    } = playlistHook || {};
 
     // États dérivés
     const sections = useMemo(() => [
@@ -107,43 +109,74 @@ const HomePage = () => {
         { value: 'year', label: 'Cette année' }
     ];
 
-    // Données pour la section active
+    // Données pour la section active avec protection contre undefined
     const currentData = useMemo(() => {
-        switch (activeSection) {
-            case 'trending':
-                return trendingVideos;
-            case 'recent':
-                return videos.filter(v => {
-                    const daysSinceUpload = (Date.now() - new Date(v.createdAt)) / (1000 * 60 * 60 * 24);
-                    return daysSinceUpload <= 7;
-                }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            case 'recommended':
-                return videos.filter(v => v.isRecommended);
-            case 'continue-watching':
-                return watchHistory?.slice(0, 12) || [];
-            case 'popular':
-                return videos.filter(v => v.viewCount > 1000)
-                    .sort((a, b) => b.viewCount - a.viewCount);
-            default:
-                return videos;
+        try {
+            switch (activeSection) {
+                case 'trending':
+                    return Array.isArray(trendingVideos) ? trendingVideos : [];
+
+                case 'recent':
+                    if (!Array.isArray(videos)) return [];
+                    return videos.filter(v => {
+                        if (!v || !v.createdAt) return false;
+                        const daysSinceUpload = (Date.now() - new Date(v.createdAt)) / (1000 * 60 * 60 * 24);
+                        return daysSinceUpload <= 7;
+                    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                case 'recommended':
+                    if (!Array.isArray(videos)) return [];
+                    return videos.filter(v => v && v.isRecommended);
+
+                case 'continue-watching':
+                    return Array.isArray(watchHistory) ? watchHistory.slice(0, 12) : [];
+
+                case 'popular':
+                    if (!Array.isArray(videos)) return [];
+                    return videos.filter(v => v && v.viewCount && v.viewCount > 1000)
+                        .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+
+                default:
+                    return Array.isArray(videos) ? videos : [];
+            }
+        } catch (error) {
+            console.warn('Erreur lors du calcul des données courantes:', error);
+            return [];
         }
     }, [activeSection, videos, trendingVideos, watchHistory]);
 
-    // Filtrage par catégorie
+    // Filtrage par catégorie avec protection
     const filteredData = useMemo(() => {
-        if (category === 'all') return currentData;
-        return currentData.filter(video =>
-            video.category?.toLowerCase() === category.toLowerCase()
-        );
+        try {
+            if (!Array.isArray(currentData)) {
+                return [];
+            }
+
+            if (category === 'all') {
+                return currentData;
+            }
+
+            return currentData.filter(video => {
+                if (!video || !video.category) return false;
+                return video.category.toLowerCase() === category.toLowerCase();
+            });
+        } catch (error) {
+            console.warn('Erreur lors du filtrage des données:', error);
+            return [];
+        }
     }, [currentData, category]);
 
     // Chargement initial
     useEffect(() => {
         const loadInitialData = async () => {
-            await Promise.all([
-                loadVideos({ page: 1, limit: 24 }),
-                loadTrendingVideos({ timeframe, category: category === 'all' ? undefined : category })
-            ]);
+            try {
+                await Promise.all([
+                    loadVideos({ page: 1, limit: 24 }),
+                    loadTrendingVideos({ timeframe, category: category === 'all' ? undefined : category })
+                ]);
+            } catch (error) {
+                console.warn('Erreur lors du chargement initial:', error);
+            }
         };
 
         loadInitialData();
@@ -151,11 +184,15 @@ const HomePage = () => {
 
     // Rafraîchissement des tendances
     const handleRefreshTrending = async () => {
-        await loadTrendingVideos({
-            timeframe,
-            category: category === 'all' ? undefined : category,
-            refresh: true
-        });
+        try {
+            await loadTrendingVideos({
+                timeframe,
+                category: category === 'all' ? undefined : category,
+                refresh: true
+            });
+        } catch (error) {
+            console.warn('Erreur lors du rafraîchissement:', error);
+        }
     };
 
     // Changement de section
@@ -175,7 +212,9 @@ const HomePage = () => {
 
     // Navigation vers une vidéo
     const handleVideoClick = (video) => {
-        window.location.href = `/video/${video.id}`;
+        if (video && video.id) {
+            window.location.href = `/video/${video.id}`;
+        }
     };
 
     // Animation variants
@@ -222,7 +261,7 @@ const HomePage = () => {
                 <div className="error-page">
                     <div className="glass-panel error-content">
                         <h2>Erreur de chargement</h2>
-                        <p>{error}</p>
+                        <p>{typeof error === 'string' ? error : error?.message || 'Une erreur est survenue'}</p>
                         <button
                             onClick={() => window.location.reload()}
                             className="frutiger-btn frutiger-btn-primary"
@@ -396,7 +435,7 @@ const HomePage = () => {
                                         >
                                             Toutes
                                         </button>
-                                        {categories?.map(cat => (
+                                        {Array.isArray(categories) && categories.map(cat => (
                                             <button
                                                 key={cat.id}
                                                 onClick={() => handleCategoryChange(cat.name)}
@@ -425,7 +464,7 @@ const HomePage = () => {
                         <h2>{sections.find(s => s.id === activeSection)?.title}</h2>
                         <p>{sections.find(s => s.id === activeSection)?.description}</p>
                         <div className="section-meta">
-                            <span>{filteredData.length} vidéos</span>
+                            <span>{Array.isArray(filteredData) ? filteredData.length : 0} vidéos</span>
                             {activeSection === 'trending' && (
                                 <span>• Mise à jour {formatRelativeTime(new Date())}</span>
                             )}
@@ -450,7 +489,7 @@ const HomePage = () => {
                                 <div className="loading-container">
                                     <LoadingSpinner size="large" text="Chargement des vidéos..." />
                                 </div>
-                            ) : filteredData.length === 0 ? (
+                            ) : (!Array.isArray(filteredData) || filteredData.length === 0) ? (
                                 <EmptyState
                                     section={activeSection}
                                     category={category}
@@ -502,6 +541,10 @@ const HomePage = () => {
  * Contenu vidéo selon le mode d'affichage
  */
 const VideoContent = ({ videos, viewMode, section, onVideoClick }) => {
+    if (!Array.isArray(videos)) {
+        return <EmptyState section={section} />;
+    }
+
     if (viewMode === 'list') {
         return (
             <div className="videos-list">
@@ -544,6 +587,8 @@ const VideoContent = ({ videos, viewMode, section, onVideoClick }) => {
  * Item de vidéo en mode liste
  */
 const VideoListItem = ({ video, onClick, showChannel, showStats }) => {
+    if (!video) return null;
+
     return (
         <div className="video-list-item glass-card" onClick={onClick}>
             <div className="video-thumbnail">
@@ -560,30 +605,32 @@ const VideoListItem = ({ video, onClick, showChannel, showStats }) => {
                 <h3 className="video-title">{video.title}</h3>
                 <p className="video-description">{video.description}</p>
 
-                {showChannel && (
+                {showChannel && video.user && (
                     <div className="video-channel">
-                        <img src={video.user?.avatar} alt={video.user?.username} />
-                        <span>{video.user?.username}</span>
+                        <img src={video.user.avatar} alt={video.user.username} />
+                        <span>{video.user.username}</span>
                     </div>
                 )}
 
                 {showStats && (
                     <div className="video-stats">
-                        <span>{formatCompactNumber(video.viewCount)} vues</span>
+                        <span>{formatCompactNumber(video.viewCount || 0)} vues</span>
                         <span>•</span>
                         <span>{formatRelativeTime(video.createdAt)}</span>
                         <span>•</span>
-                        <span>{formatCompactNumber(video.likesCount)} likes</span>
+                        <span>{formatCompactNumber(video.likesCount || 0)} likes</span>
                     </div>
                 )}
 
-                <div className="video-tags">
-                    {video.tags?.slice(0, 3).map(tag => (
-                        <span key={tag} className="frutiger-badge frutiger-badge-secondary">
-                            {tag}
-                        </span>
-                    ))}
-                </div>
+                {video.tags && (
+                    <div className="video-tags">
+                        {video.tags.slice(0, 3).map(tag => (
+                            <span key={tag} className="frutiger-badge frutiger-badge-secondary">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -619,7 +666,7 @@ const EmptyState = ({ section, category, onReset }) => {
             </div>
             <h3>Aucun contenu</h3>
             <p>{getEmptyMessage()}</p>
-            {category !== 'all' && (
+            {category !== 'all' && onReset && (
                 <button
                     onClick={onReset}
                     className="frutiger-btn frutiger-btn-primary"
@@ -638,7 +685,7 @@ const UserPersonalizedSections = ({ userPlaylists, favorites, watchLater, onVide
     return (
         <div className="personalized-sections">
             {/* Favoris récents */}
-            {favorites?.length > 0 && (
+            {Array.isArray(favorites) && favorites.length > 0 && (
                 <div className="section-card glass-panel">
                     <div className="section-header">
                         <h3>Vos favoris récents</h3>
@@ -660,7 +707,7 @@ const UserPersonalizedSections = ({ userPlaylists, favorites, watchLater, onVide
             )}
 
             {/* À regarder plus tard */}
-            {watchLater?.length > 0 && (
+            {Array.isArray(watchLater) && watchLater.length > 0 && (
                 <div className="section-card glass-panel">
                     <div className="section-header">
                         <h3>À regarder plus tard</h3>
@@ -682,7 +729,7 @@ const UserPersonalizedSections = ({ userPlaylists, favorites, watchLater, onVide
             )}
 
             {/* Playlists de l'utilisateur */}
-            {userPlaylists?.length > 0 && (
+            {Array.isArray(userPlaylists) && userPlaylists.length > 0 && (
                 <div className="section-card glass-panel">
                     <div className="section-header">
                         <h3>Vos playlists</h3>

@@ -7,11 +7,9 @@ import { useSearchBar, usePopularSearches } from '../../hooks/useSearch';
 import LoadingSpinner from '../common/LoadingSpinner';
 import {
     ROUTES,
-    SEARCH_TYPES,
-    DEBOUNCE_DELAYS,
     STORAGE_KEYS
 } from '../../utils/constants';
-import { debounce, getLocalStorage, setLocalStorage } from '../../utils/helpers';
+import { getLocalStorage, setLocalStorage } from '../../utils/helpers';
 import { truncateText } from '../../utils/formatters';
 
 /**
@@ -47,14 +45,8 @@ const SearchBar = ({
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [searchHistory, setSearchHistory] = useState([]);
 
-    // Hooks personnalisés
-    const {
-        inputProps,
-        formProps,
-        hasInput,
-        suggestions,
-        isLoadingSuggestions
-    } = useSearchBar({
+    // Hooks personnalisés avec gestion d'erreur
+    const searchBarHook = useSearchBar({
         placeholder,
         showSuggestions,
         autoFocus,
@@ -62,12 +54,30 @@ const SearchBar = ({
         initialValue
     });
 
-    const { popularSearches, isLoading: isLoadingPopular } = usePopularSearches();
+    const popularSearchesHook = usePopularSearches();
+
+    // Extraire les données avec valeurs par défaut pour éviter les erreurs
+    const {
+        inputProps = {},
+        formProps = {},
+        hasInput = false,
+        suggestions = [],
+        isLoadingSuggestions = false
+    } = searchBarHook || {};
+
+    const {
+        popularSearches = []
+    } = popularSearchesHook || {};
 
     // Chargement de l'historique de recherche
     useEffect(() => {
-        const history = getLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, []);
-        setSearchHistory(history.slice(0, 5)); // Garde les 5 dernières
+        try {
+            const history = getLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, []);
+            setSearchHistory(Array.isArray(history) ? history.slice(0, 5) : []);
+        } catch (error) {
+            console.warn('Erreur lors du chargement de l\'historique:', error);
+            setSearchHistory([]);
+        }
     }, []);
 
     // Focus automatique
@@ -97,7 +107,7 @@ const SearchBar = ({
 
     // Soumission de recherche
     function handleSearchSubmit(query) {
-        if (!query.trim()) return;
+        if (!query || !query.trim()) return;
 
         // Ferme les suggestions
         setIsOpen(false);
@@ -116,23 +126,31 @@ const SearchBar = ({
 
     // Sauvegarde dans l'historique
     const saveToHistory = (query) => {
-        const history = getLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, []);
-        const newHistory = [
-            query,
-            ...history.filter(item => item !== query)
-        ].slice(0, 10); // Garde les 10 dernières
+        try {
+            const history = getLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, []);
+            const newHistory = [
+                query,
+                ...history.filter(item => item !== query)
+            ].slice(0, 10); // Garde les 10 dernières
 
-        setLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, newHistory);
-        setSearchHistory(newHistory.slice(0, 5));
+            setLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, newHistory);
+            setSearchHistory(newHistory.slice(0, 5));
+        } catch (error) {
+            console.warn('Erreur lors de la sauvegarde:', error);
+        }
     };
 
     // Suppression d'un élément de l'historique
     const removeFromHistory = (query) => {
-        const history = getLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, []);
-        const newHistory = history.filter(item => item !== query);
+        try {
+            const history = getLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, []);
+            const newHistory = history.filter(item => item !== query);
 
-        setLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, newHistory);
-        setSearchHistory(newHistory.slice(0, 5));
+            setLocalStorage(STORAGE_KEYS.SEARCH_HISTORY, newHistory);
+            setSearchHistory(newHistory.slice(0, 5));
+        } catch (error) {
+            console.warn('Erreur lors de la suppression:', error);
+        }
     };
 
     // Gestion des touches clavier
@@ -159,7 +177,7 @@ const SearchBar = ({
                 if (selectedIndex >= 0 && selectedIndex < allSuggestions.length) {
                     const selected = allSuggestions[selectedIndex];
                     handleSearchSubmit(selected.query || selected);
-                } else {
+                } else if (formProps.onSubmit) {
                     formProps.onSubmit(e);
                 }
                 break;
@@ -176,39 +194,43 @@ const SearchBar = ({
     const getAllSuggestions = () => {
         const allSuggestions = [];
 
-        // Historique de recherche
-        if (searchHistory.length > 0 && !hasInput) {
-            allSuggestions.push(
-                ...searchHistory.map(query => ({
-                    type: 'history',
-                    query,
-                    icon: Clock
-                }))
-            );
-        }
+        try {
+            // Historique de recherche
+            if (searchHistory.length > 0 && !hasInput) {
+                allSuggestions.push(
+                    ...searchHistory.map(query => ({
+                        type: 'history',
+                        query,
+                        icon: Clock
+                    }))
+                );
+            }
 
-        // Suggestions en temps réel
-        if (suggestions.length > 0 && hasInput) {
-            allSuggestions.push(
-                ...suggestions.slice(0, maxSuggestions).map(suggestion => ({
-                    type: 'suggestion',
-                    query: suggestion.query || suggestion,
-                    count: suggestion.count,
-                    icon: Search
-                }))
-            );
-        }
+            // Suggestions en temps réel
+            if (Array.isArray(suggestions) && suggestions.length > 0 && hasInput) {
+                allSuggestions.push(
+                    ...suggestions.slice(0, maxSuggestions).map(suggestion => ({
+                        type: 'suggestion',
+                        query: suggestion.query || suggestion,
+                        count: suggestion.count,
+                        icon: Search
+                    }))
+                );
+            }
 
-        // Recherches populaires (si pas d'input)
-        if (!hasInput && popularSearches.length > 0) {
-            allSuggestions.push(
-                ...popularSearches.slice(0, 5).map(popular => ({
-                    type: 'popular',
-                    query: popular.query || popular,
-                    count: popular.count,
-                    icon: TrendingUp
-                }))
-            );
+            // Recherches populaires (si pas d'input)
+            if (!hasInput && Array.isArray(popularSearches) && popularSearches.length > 0) {
+                allSuggestions.push(
+                    ...popularSearches.slice(0, 5).map(popular => ({
+                        type: 'popular',
+                        query: popular.query || popular,
+                        count: popular.count,
+                        icon: TrendingUp
+                    }))
+                );
+            }
+        } catch (error) {
+            console.warn('Erreur lors de la génération des suggestions:', error);
         }
 
         return allSuggestions;
@@ -262,7 +284,9 @@ const SearchBar = ({
                         <button
                             type="button"
                             onClick={() => {
-                                inputProps.onChange({ target: { value: '' } });
+                                if (inputProps.onChange) {
+                                    inputProps.onChange({ target: { value: '' } });
+                                }
                                 inputRef.current?.focus();
                             }}
                             className="
