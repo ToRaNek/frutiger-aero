@@ -4,16 +4,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
-    Mail,
-    Lock,
-    Eye,
-    EyeOff,
-    User,
-    LogIn,
     ArrowRight,
-    AlertCircle,
     CheckCircle,
-    RefreshCw,
     Sparkles,
     Shield,
     Globe,
@@ -24,10 +16,9 @@ import {
 
 // Components
 import LoginForm from '../components/auth/LoginForm';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 // Utils
-import { formatRelativeTime } from '../utils/formatters';
 import { isValidJWT } from '../utils/helpers';
 
 /**
@@ -52,7 +43,7 @@ const LoginPage = () => {
 
             if (accessToken && isValidJWT(accessToken) && userData) {
                 try {
-                    const user = JSON.parse(userData);
+                    JSON.parse(userData); // Vérifier que les données sont valides
                     const redirectTo = location.state?.from?.pathname || '/';
                     navigate(redirectTo, { replace: true });
                     return;
@@ -359,7 +350,7 @@ const LoginPage = () => {
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                     >
-                                        <AlertCircle size={16} className="text-yellow-400" />
+                                        <CheckCircle size={16} className="text-yellow-400" />
                                         <span className="text-white/90 text-sm">Veuillez vous connecter pour accéder à cette page</span>
                                     </motion.div>
                                 )}

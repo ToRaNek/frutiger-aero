@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 
 // Components
-import VideoGrid from '../components/video/VideoGrid';
 import VideoCard from '../components/video/VideoCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
@@ -42,7 +41,7 @@ const HomePage = () => {
     // États des données selon la documentation backend
     const [videos, setVideos] = useState([]);
     const [trendingVideos, setTrendingVideos] = useState([]);
-    const [categories, setCategories] = useState(Object.values(VIDEO_CATEGORIES));
+    const [categories] = useState(Object.values(VIDEO_CATEGORIES));
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -110,7 +109,7 @@ const HomePage = () => {
 
     // Fonction pour charger les vidéos selon Video.findTrending de la doc
     const loadTrendingVideos = async (options = {}) => {
-        const { timeframe: tf = timeframe, category: cat = category, refresh = false } = options;
+        const { timeframe: tf = timeframe, category: cat = category } = options;
 
         try {
             setIsLoading(true);
@@ -297,8 +296,7 @@ const HomePage = () => {
         try {
             await loadTrendingVideos({
                 timeframe,
-                category: category === 'all' ? undefined : category,
-                refresh: true
+                category: category === 'all' ? undefined : category
             });
         } catch (error) {
             console.warn('Erreur lors du rafraîchissement:', error);

@@ -6,8 +6,6 @@ import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-
 import LoadingSpinner from '../common/LoadingSpinner';
 import {
     ROUTES,
-    ERROR_MESSAGES,
-    SUCCESS_MESSAGES,
     DEBOUNCE_DELAYS,
     API_ENDPOINTS
 } from '../../utils/constants';

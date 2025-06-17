@@ -4,40 +4,24 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
-    User,
-    Mail,
-    Lock,
     Eye,
-    EyeOff,
-    UserPlus,
-    ArrowRight,
     CheckCircle,
-    AlertCircle,
-    Shield,
     Sparkles,
     Users,
     Video,
     Heart,
     Zap,
-    TrendingUp,
-    DollarSign,
-    Star,
-    Crown,
-    Gift,
-    Play,
-    Search,
-    Download,
+    ArrowRight,
+    Shield,
     Globe,
-    Camera,
-    Headphones
+    Camera
 } from 'lucide-react';
 
 // Components
 import RegisterForm from '../components/auth/RegisterForm';
-import LoadingSpinner from '../common/LoadingSpinner';
+import LoadingSpinner from '../components/common/LoadingSpinner';
 
 // Utils
-import { formatRelativeTime } from '../utils/formatters';
 import { isValidJWT } from '../utils/helpers';
 
 /**
@@ -63,7 +47,7 @@ const RegisterPage = () => {
 
             if (accessToken && isValidJWT(accessToken) && userData) {
                 try {
-                    const user = JSON.parse(userData);
+                    JSON.parse(userData); // Vérifier que les données sont valides
                     const redirectTo = location.state?.from?.pathname || '/';
                     navigate(redirectTo, { replace: true });
                     return;
@@ -291,6 +275,7 @@ const RegisterPage = () => {
                             onNext={handleNextStep}
                             onPrev={handlePrevStep}
                             onSkip={handleSkipOnboarding}
+                            stepVariants={stepVariants}
                         />
                     ) : (
                         <RegistrationFlow
@@ -316,7 +301,8 @@ const OnboardingFlow = ({
                             onUserTypeChange,
                             onNext,
                             onPrev,
-                            onSkip
+                            onSkip,
+                            stepVariants
                         }) => {
     const currentStepData = steps[currentStep];
     const IconComponent = currentStepData.icon;
