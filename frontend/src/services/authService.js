@@ -1,9 +1,155 @@
 // frontend/src/services/authService.js
-import { ApiHelpers, TokenStorage, MemoryCache, ENDPOINTS } from './api';
 
 /**
- * Service d'authentification utilisant les endpoints du backend
- * Respecte exactement les noms de méthodes du backend authController
+ * Service d'authentification corrigé selon la documentation backend fournie
+ * Respecte exactement les endpoints et méthodes du backend documenté
+ */
+
+// Configuration API selon la documentation
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+// Endpoints exacts selon la documentation backend
+const ENDPOINTS = {
+    AUTH: {
+        REGISTER: '/auth/register',
+        LOGIN: '/auth/login',
+        LOGOUT: '/auth/logout',
+        REFRESH: '/auth/refresh-token',
+        ME: '/auth/me',
+        VERIFY_EMAIL: '/auth/verify-email',
+        RESEND_VERIFICATION: '/auth/resend-verification',
+        FORGOT_PASSWORD: '/auth/forgot-password',
+        RESET_PASSWORD: '/auth/reset-password'
+    }
+};
+
+// Gestion des tokens selon la doc JWT backend
+class TokenStorage {
+    static setTokens(accessToken, refreshToken) {
+        localStorage.setItem('frutiger_access_token', accessToken);
+        localStorage.setItem('frutiger_refresh_token', refreshToken);
+    }
+
+    static getAccessToken() {
+        return localStorage.getItem('frutiger_access_token');
+    }
+
+    static getRefreshToken() {
+        return localStorage.getItem('frutiger_refresh_token');
+    }
+
+    static clearTokens() {
+        localStorage.removeItem('frutiger_access_token');
+        localStorage.removeItem('frutiger_refresh_token');
+        localStorage.removeItem('frutiger_user');
+    }
+}
+
+// Cache mémoire pour optimiser les requêtes
+class MemoryCache {
+    static cache = new Map();
+
+    static set(key, value, ttl = 300000) { // 5 minutes par défaut
+        const expiry = Date.now() + ttl;
+        this.cache.set(key, { value, expiry });
+    }
+
+    static get(key) {
+        const item = this.cache.get(key);
+        if (!item) return null;
+
+        if (Date.now() > item.expiry) {
+            this.cache.delete(key);
+            return null;
+        }
+
+        return item.value;
+    }
+
+    static delete(key) {
+        this.cache.delete(key);
+    }
+
+    static clear() {
+        this.cache.clear();
+    }
+}
+
+// Helpers API selon la documentation backend
+class ApiHelpers {
+    static async request(endpoint, options = {}) {
+        const url = `${API_BASE_URL}${endpoint}`;
+        const accessToken = TokenStorage.getAccessToken();
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(accessToken && { 'Authorization': `Bearer ${accessToken}` })
+            },
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+
+            if (!response.ok) {
+                return {
+                    data: null,
+                    error: {
+                        message: data.message || 'Une erreur est survenue',
+                        code: data.code || 'UNKNOWN_ERROR',
+                        type: this.getErrorType(response.status),
+                        status: response.status
+                    }
+                };
+            }
+
+            return { data, error: null };
+        } catch (error) {
+            return {
+                data: null,
+                error: {
+                    message: 'Erreur de connexion au serveur',
+                    type: 'NETWORK_ERROR',
+                    originalError: error
+                }
+            };
+        }
+    }
+
+    static async get(endpoint) {
+        return this.request(endpoint, { method: 'GET' });
+    }
+
+    static async post(endpoint, body) {
+        return this.request(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        });
+    }
+
+    static async put(endpoint, body) {
+        return this.request(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(body)
+        });
+    }
+
+    static async delete(endpoint) {
+        return this.request(endpoint, { method: 'DELETE' });
+    }
+
+    static getErrorType(status) {
+        if (status >= 400 && status < 500) return 'CLIENT_ERROR';
+        if (status >= 500) return 'SERVER_ERROR';
+        return 'UNKNOWN_ERROR';
+    }
+}
+
+/**
+ * Service d'authentification principal
+ * Conforme à la documentation backend authController.js
  */
 class AuthService {
     constructor() {
@@ -12,13 +158,13 @@ class AuthService {
     }
 
     /**
-     * Inscription d'un nouvel utilisateur
-     * Endpoint: POST /auth/register
+     * Inscription selon register(req, res) du backend
+     * Body requis: { username, email, password, firstName?, lastName? }
      */
     async register(userData) {
         const { username, email, password, firstName, lastName } = userData;
 
-        // Validation côté client
+        // Validation côté client selon les règles backend
         const validationErrors = this._validateRegistrationData(userData);
         if (validationErrors.length > 0) {
             return {
@@ -31,6 +177,7 @@ class AuthService {
             };
         }
 
+        // Appel exact selon la documentation backend
         const { data, error } = await ApiHelpers.post(ENDPOINTS.AUTH.REGISTER, {
             username,
             email,
@@ -40,11 +187,14 @@ class AuthService {
         });
 
         if (data && !error) {
-            // Stocker les tokens après inscription réussie
+            // Gestion des tokens selon generateTokenPair() de la doc
             if (data.accessToken && data.refreshToken) {
                 TokenStorage.setTokens(data.accessToken, data.refreshToken);
                 this.currentUser = data.user;
                 MemoryCache.set('currentUser', data.user);
+
+                // Stocker les données utilisateur
+                localStorage.setItem('frutiger_user', JSON.stringify(data.user));
             }
         }
 
@@ -52,13 +202,13 @@ class AuthService {
     }
 
     /**
-     * Connexion utilisateur
-     * Endpoint: POST /auth/login
+     * Connexion selon login(req, res) du backend
+     * Body requis: { login, password } - login peut être email ou username
      */
     async login(credentials) {
         const { login, password, rememberMe = false } = credentials;
 
-        // Validation côté client
+        // Validation basique
         if (!login || !password) {
             return {
                 data: null,
@@ -69,19 +219,22 @@ class AuthService {
             };
         }
 
+        // Appel selon User.authenticate(login, password) de la doc
         const { data, error } = await ApiHelpers.post(ENDPOINTS.AUTH.LOGIN, {
-            login, // Peut être email ou username selon le backend
-            password,
-            rememberMe
+            login, // email ou username selon la doc
+            password
         });
 
         if (data && !error) {
-            // Stocker les tokens après connexion réussie
+            // Gestion des tokens selon la doc JWT
             TokenStorage.setTokens(data.accessToken, data.refreshToken);
             this.currentUser = data.user;
             MemoryCache.set('currentUser', data.user);
 
-            // Logs d'activité pour sécurité
+            // Stocker les données utilisateur
+            localStorage.setItem('frutiger_user', JSON.stringify(data.user));
+
+            // Log d'activité pour sécurité
             this._logUserActivity('LOGIN_SUCCESS', {
                 userId: data.user.id,
                 timestamp: new Date().toISOString()
@@ -92,8 +245,8 @@ class AuthService {
     }
 
     /**
-     * Renouvellement du token d'accès
-     * Endpoint: POST /auth/refresh
+     * Renouvellement du token selon refreshToken(req, res) du backend
+     * Body requis: { refreshToken }
      */
     async refreshToken() {
         const refreshToken = TokenStorage.getRefreshToken();
@@ -113,11 +266,12 @@ class AuthService {
         });
 
         if (data && !error) {
-            // Mettre à jour les tokens
-            TokenStorage.setTokens(data.accessToken, data.refreshToken);
+            // Mettre à jour les tokens selon la doc
+            TokenStorage.setTokens(data.accessToken, data.refreshToken || refreshToken);
             if (data.user) {
                 this.currentUser = data.user;
                 MemoryCache.set('currentUser', data.user);
+                localStorage.setItem('frutiger_user', JSON.stringify(data.user));
             }
         } else {
             // Échec du refresh : nettoyer les tokens
@@ -128,8 +282,8 @@ class AuthService {
     }
 
     /**
-     * Déconnexion utilisateur
-     * Endpoint: POST /auth/logout
+     * Déconnexion selon logout(req, res) du backend
+     * Body optionnel: { refreshToken }
      */
     async logout() {
         const refreshToken = TokenStorage.getRefreshToken();
@@ -148,8 +302,8 @@ class AuthService {
     }
 
     /**
-     * Vérification d'email
-     * Endpoint: POST /auth/verify-email
+     * Vérification d'email selon verifyEmail(req, res) du backend
+     * Param requis: token dans l'URL
      */
     async verifyEmail(token) {
         if (!token) {
@@ -162,14 +316,14 @@ class AuthService {
             };
         }
 
-        const { data, error } = await ApiHelpers.post(ENDPOINTS.AUTH.VERIFY_EMAIL, {
-            token
-        });
+        // Utilisation du endpoint avec le token selon la doc
+        const { data, error } = await ApiHelpers.post(`${ENDPOINTS.AUTH.VERIFY_EMAIL}/${token}`, {});
 
         if (data && !error && this.currentUser) {
             // Mettre à jour le statut de vérification
-            this.currentUser.isEmailVerified = true;
+            this.currentUser.emailVerified = true;
             MemoryCache.set('currentUser', this.currentUser);
+            localStorage.setItem('frutiger_user', JSON.stringify(this.currentUser));
         }
 
         return { data, error };
@@ -177,7 +331,6 @@ class AuthService {
 
     /**
      * Renvoyer l'email de vérification
-     * Endpoint: POST /auth/resend-verification
      */
     async resendVerificationEmail(email) {
         if (!email) {
@@ -196,8 +349,8 @@ class AuthService {
     }
 
     /**
-     * Récupérer les informations de l'utilisateur connecté
-     * Endpoint: GET /auth/me
+     * Récupérer les infos utilisateur selon me(req, res) du backend
+     * Auth requise: Oui
      */
     async me() {
         // Vérifier le cache d'abord
@@ -210,8 +363,9 @@ class AuthService {
         const { data, error } = await ApiHelpers.get(ENDPOINTS.AUTH.ME);
 
         if (data && !error) {
-            this.currentUser = data.user;
-            MemoryCache.set('currentUser', data.user);
+            this.currentUser = data.user || data;
+            MemoryCache.set('currentUser', this.currentUser);
+            localStorage.setItem('frutiger_user', JSON.stringify(this.currentUser));
         }
 
         return { data, error };
@@ -219,7 +373,6 @@ class AuthService {
 
     /**
      * Demande de réinitialisation de mot de passe
-     * Endpoint: POST /auth/forgot-password
      */
     async forgotPassword(email) {
         if (!email || !this._isValidEmail(email)) {
@@ -239,7 +392,6 @@ class AuthService {
 
     /**
      * Réinitialisation du mot de passe
-     * Endpoint: POST /auth/reset-password
      */
     async resetPassword(token, newPassword) {
         if (!token || !newPassword) {
@@ -271,6 +423,23 @@ class AuthService {
     }
 
     /**
+     * Vérifier le token et récupérer l'utilisateur (pour l'initialisation)
+     */
+    async verifyToken() {
+        const accessToken = TokenStorage.getAccessToken();
+        if (!accessToken || !this._isTokenValid()) {
+            return null;
+        }
+
+        const { data, error } = await this.me();
+        if (data && !error) {
+            return data.user || data;
+        }
+
+        return null;
+    }
+
+    /**
      * Vérifier si l'utilisateur est connecté
      */
     isAuthenticated() {
@@ -285,10 +454,27 @@ class AuthService {
     }
 
     /**
-     * Vérifier si l'utilisateur a un rôle spécifique
+     * Vérifier si l'utilisateur a un rôle spécifique selon USER_ROLES de la doc
      */
     hasRole(role) {
-        return this.currentUser?.role === role;
+        if (!this.currentUser || !this.currentUser.role) return false;
+
+        // Admin a tous les droits selon la doc
+        if (this.currentUser.role === 'admin') return true;
+
+        return this.currentUser.role === role;
+    }
+
+    /**
+     * Vérifier si l'utilisateur a une permission selon PERMISSIONS de la doc
+     */
+    hasPermission(permission) {
+        if (!this.currentUser) return false;
+
+        // Admin a toutes les permissions selon la doc
+        if (this.currentUser.role === 'admin') return true;
+
+        return this.currentUser.permissions && this.currentUser.permissions.includes(permission);
     }
 
     /**
@@ -309,20 +495,33 @@ class AuthService {
      * Vérifier si l'email est vérifié
      */
     isEmailVerified() {
-        return this.currentUser?.isEmailVerified || false;
+        return this.currentUser?.emailVerified || this.currentUser?.email_verified || false;
     }
 
     /**
-     * Initialiser le service (récupérer l'utilisateur si token présent)
+     * Initialiser le service
      */
     async initialize() {
         if (this.isInitialized) return;
 
-        if (TokenStorage.getAccessToken()) {
+        const accessToken = TokenStorage.getAccessToken();
+        const storedUser = localStorage.getItem('frutiger_user');
+
+        if (accessToken && storedUser) {
             try {
-                await this.me();
+                const userData = JSON.parse(storedUser);
+                if (this._isTokenValid()) {
+                    this.currentUser = userData;
+                    MemoryCache.set('currentUser', userData);
+
+                    // Vérifier avec le serveur
+                    await this.me();
+                } else {
+                    // Token expiré, essayer de le rafraîchir
+                    await this.refreshToken();
+                }
             } catch (error) {
-                // En cas d'erreur, nettoyer les tokens invalides
+                console.error('Erreur initialisation auth:', error);
                 this.logout();
             }
         }
@@ -330,10 +529,10 @@ class AuthService {
         this.isInitialized = true;
     }
 
-    // Méthodes privées de validation et utilitaires
+    // Méthodes privées de validation
 
     /**
-     * Valider les données d'inscription
+     * Valider les données d'inscription selon les règles backend
      */
     _validateRegistrationData(data) {
         const errors = [];
@@ -367,7 +566,7 @@ class AuthService {
     }
 
     /**
-     * Valider un mot de passe
+     * Valider un mot de passe selon les règles backend
      */
     _validatePassword(password) {
         const errors = [];
@@ -393,11 +592,6 @@ class AuthService {
             isValid = false;
         }
 
-        if (!/(?=.*[@$!%*?&])/.test(password)) {
-            errors.push('Le mot de passe doit contenir au moins un caractère spécial');
-            isValid = false;
-        }
-
         return { isValid, errors };
     }
 
@@ -417,7 +611,7 @@ class AuthService {
         if (!token) return false;
 
         try {
-            // Décoder le token JWT pour vérifier l'expiration
+            // Décoder le token JWT selon la doc JWT backend
             const payload = JSON.parse(atob(token.split('.')[1]));
             const currentTime = Date.now() / 1000;
             return payload.exp > currentTime;
@@ -437,41 +631,25 @@ class AuthService {
             ...details
         };
 
-        // Stocker dans localStorage pour debug (optionnel)
+        // En développement, afficher dans la console
         if (process.env.NODE_ENV === 'development') {
             console.log('Auth Activity:', logData);
         }
 
-        // En production, vous pourriez envoyer ces logs au backend
+        // En production, envoyer au backend pour audit
         // ApiHelpers.post('/auth/log-activity', logData);
     }
 
     /**
-     * Nettoyer les données sensibles avant déconnexion
-     */
-    _clearSensitiveData() {
-        // Nettoyer les formulaires qui pourraient contenir des mots de passe
-        const passwordInputs = document.querySelectorAll('input[type="password"]');
-        passwordInputs.forEach(input => {
-            input.value = '';
-        });
-
-        // Nettoyer le cache spécifique à l'utilisateur
-        MemoryCache.delete('currentUser');
-        MemoryCache.delete('userPreferences');
-        MemoryCache.delete('userPlaylists');
-    }
-
-    /**
-     * Obtenir les permissions de l'utilisateur
+     * Obtenir les permissions de l'utilisateur selon la doc backend
      */
     getUserPermissions() {
         if (!this.currentUser) return [];
 
-        const basePermissions = ['view_content', 'create_playlist'];
+        const basePermissions = ['view_content'];
 
-        if (this.currentUser.isEmailVerified) {
-            basePermissions.push('upload_video', 'comment', 'like');
+        if (this.isEmailVerified()) {
+            basePermissions.push('upload_video', 'create_playlist', 'comment', 'like');
         }
 
         if (this.isModerator()) {
@@ -483,13 +661,6 @@ class AuthService {
         }
 
         return basePermissions;
-    }
-
-    /**
-     * Vérifier une permission spécifique
-     */
-    hasPermission(permission) {
-        return this.getUserPermissions().includes(permission);
     }
 }
 
@@ -503,10 +674,11 @@ export const AUTH_ERROR_TYPES = {
     NETWORK_ERROR: 'NETWORK_ERROR',
     PERMISSION_ERROR: 'PERMISSION_ERROR',
     RATE_LIMIT_ERROR: 'RATE_LIMIT_ERROR',
-    SERVER_ERROR: 'SERVER_ERROR'
+    SERVER_ERROR: 'SERVER_ERROR',
+    CLIENT_ERROR: 'CLIENT_ERROR'
 };
 
-// Export des constantes utiles
+// Export des constantes selon la documentation backend
 export const USER_ROLES = {
     USER: 'user',
     MODERATOR: 'moderator',
@@ -526,5 +698,9 @@ export const PERMISSIONS = {
     VIEW_ANALYTICS: 'view_analytics'
 };
 
+// Export des utilitaires
+export { TokenStorage, MemoryCache, ApiHelpers };
+
+// Export principal du service
 export { authService };
 export default authService;

@@ -22,16 +22,16 @@ import {
 import VideoCard from '../components/video/VideoCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
-// Utils
+// Utils et constants corrigés selon la documentation backend
 import { formatRelativeTime, formatCompactNumber, formatDuration } from '../utils/formatters';
 import { API_ENDPOINTS, PAGINATION, VIDEO_CATEGORIES } from '../utils/constants';
 
 /**
- * Page d'accueil avec vidéos tendances et recommandations personnalisées
- * Corrigée selon la documentation backend fournie
+ * Page d'accueil corrigée selon la documentation backend fournie
+ * Utilise exactement les endpoints et méthodes documentés
  */
 const HomePage = () => {
-    // États locaux
+    // États locaux pour l'interface
     const [activeSection, setActiveSection] = useState('trending');
     const [timeframe, setTimeframe] = useState('today');
     const [category, setCategory] = useState('all');
@@ -45,26 +45,33 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // États utilisateur selon la doc backend (User model)
+    // États utilisateur selon User.findById de la doc
     const [user, setUser] = useState(null);
     const [userPlaylists, setUserPlaylists] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [watchLater, setWatchLater] = useState([]);
     const [watchHistory, setWatchHistory] = useState([]);
 
-    // Récupération de l'utilisateur depuis le localStorage
+    // Récupération de l'utilisateur depuis les tokens selon la doc JWT
     useEffect(() => {
         const storedUser = localStorage.getItem('frutiger_user');
-        if (storedUser) {
+        const accessToken = localStorage.getItem('frutiger_access_token');
+
+        if (storedUser && accessToken) {
             try {
-                setUser(JSON.parse(storedUser));
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
             } catch (error) {
                 console.error('Erreur parsing user:', error);
+                // Nettoyer les tokens invalides selon la doc JWT
+                localStorage.removeItem('frutiger_access_token');
+                localStorage.removeItem('frutiger_refresh_token');
+                localStorage.removeItem('frutiger_user');
             }
         }
     }, []);
 
-    // États dérivés avec sections selon l'utilisateur connecté
+    // Sections disponibles selon l'état utilisateur
     const sections = useMemo(() => [
         {
             id: 'trending',
@@ -107,7 +114,9 @@ const HomePage = () => {
         { value: 'year', label: 'Cette année' }
     ];
 
-    // Fonction pour charger les vidéos selon Video.findTrending de la doc
+    /**
+     * Charger les vidéos tendances selon Video.findTrending() de la doc backend
+     */
     const loadTrendingVideos = async (options = {}) => {
         const { timeframe: tf = timeframe, category: cat = category } = options;
 
@@ -117,24 +126,26 @@ const HomePage = () => {
             const params = new URLSearchParams({
                 timeframe: tf,
                 ...(cat !== 'all' && { category: cat }),
-                limit: PAGINATION.VIDEO_GRID_LIMIT
+                limit: PAGINATION.VIDEO_GRID_LIMIT.toString()
             });
 
-            const response = await fetch(
-                `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${API_ENDPOINTS.VIDEOS.TRENDING}?${params}`,
-                {
-                    headers: {
-                        'Authorization': user ? `Bearer ${localStorage.getItem('frutiger_access_token')}` : undefined,
-                        'Content-Type': 'application/json'
-                    }
+            // Utilisation de l'endpoint exact de la documentation
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}${API_ENDPOINTS.VIDEOS.TRENDING}?${params}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(user && { 'Authorization': `Bearer ${localStorage.getItem('frutiger_access_token')}` })
                 }
-            );
+            });
 
             if (response.ok) {
                 const data = await response.json();
-                setTrendingVideos(data.videos || data);
+                // Structure selon Video.findTrending() retournant un array
+                setTrendingVideos(Array.isArray(data) ? data : data.videos || []);
             } else {
-                throw new Error('Erreur lors du chargement des tendances');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erreur lors du chargement des tendances');
             }
         } catch (error) {
             setError(error.message);
@@ -144,7 +155,9 @@ const HomePage = () => {
         }
     };
 
-    // Fonction pour charger les vidéos générales selon getVideos de la doc
+    /**
+     * Charger les vidéos générales selon getVideos() de la doc backend
+     */
     const loadVideos = async (options = {}) => {
         const { page = 1, limit = PAGINATION.VIDEO_GRID_LIMIT } = options;
 
@@ -154,24 +167,27 @@ const HomePage = () => {
             const params = new URLSearchParams({
                 page: page.toString(),
                 limit: limit.toString(),
-                sort: 'newest'
+                sort: 'created_at',
+                order: 'desc'
             });
 
-            const response = await fetch(
-                `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${API_ENDPOINTS.VIDEOS.LIST}?${params}`,
-                {
-                    headers: {
-                        'Authorization': user ? `Bearer ${localStorage.getItem('frutiger_access_token')}` : undefined,
-                        'Content-Type': 'application/json'
-                    }
+            // Endpoint selon la documentation backend
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}${API_ENDPOINTS.VIDEOS.LIST}?${params}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(user && { 'Authorization': `Bearer ${localStorage.getItem('frutiger_access_token')}` })
                 }
-            );
+            });
 
             if (response.ok) {
                 const data = await response.json();
+                // Structure selon paginate() de la doc database.js
                 setVideos(data.videos || data.data || []);
             } else {
-                throw new Error('Erreur lors du chargement des vidéos');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erreur lors du chargement des vidéos');
             }
         } catch (error) {
             setError(error.message);
@@ -181,29 +197,31 @@ const HomePage = () => {
         }
     };
 
-    // Chargement des playlists utilisateur selon la doc backend
+    /**
+     * Charger les playlists utilisateur selon la doc playlistController
+     */
     const loadUserPlaylists = async () => {
         if (!user) return;
 
         try {
-            const response = await fetch(
-                `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${API_ENDPOINTS.PLAYLISTS.LIST}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('frutiger_access_token')}`,
-                        'Content-Type': 'application/json'
-                    }
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}${API_ENDPOINTS.PLAYLISTS.LIST}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('frutiger_access_token')}`,
+                    'Content-Type': 'application/json'
                 }
-            );
+            });
 
             if (response.ok) {
                 const data = await response.json();
-                setUserPlaylists(data.playlists || data.data || []);
+                const playlists = data.playlists || data.data || [];
+                setUserPlaylists(playlists);
 
-                // Séparer les playlists spéciales selon la doc
-                const favoritesPlaylist = data.playlists?.find(p => p.type === 'favorites');
-                const watchLaterPlaylist = data.playlists?.find(p => p.type === 'watch_later');
-                const historyPlaylist = data.playlists?.find(p => p.type === 'history');
+                // Identifier les playlists spéciales selon la doc backend
+                const favoritesPlaylist = playlists.find(p => p.type === 'favorites');
+                const watchLaterPlaylist = playlists.find(p => p.type === 'watch_later');
+                const historyPlaylist = playlists.find(p => p.type === 'history');
 
                 if (favoritesPlaylist) setFavorites(favoritesPlaylist.videos || []);
                 if (watchLaterPlaylist) setWatchLater(watchLaterPlaylist.videos || []);
@@ -214,7 +232,7 @@ const HomePage = () => {
         }
     };
 
-    // Données pour la section active avec protection contre undefined
+    // Données filtrées selon la section active
     const currentData = useMemo(() => {
         try {
             switch (activeSection) {
@@ -224,22 +242,22 @@ const HomePage = () => {
                 case 'recent':
                     if (!Array.isArray(videos)) return [];
                     return videos.filter(v => {
-                        if (!v || !v.createdAt) return false;
-                        const daysSinceUpload = (Date.now() - new Date(v.createdAt)) / (1000 * 60 * 60 * 24);
+                        if (!v || !v.created_at) return false;
+                        const daysSinceUpload = (Date.now() - new Date(v.created_at)) / (1000 * 60 * 60 * 24);
                         return daysSinceUpload <= 7;
-                    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
                 case 'recommended':
                     if (!Array.isArray(videos)) return [];
-                    return videos.filter(v => v && v.isRecommended);
+                    return videos.filter(v => v && v.is_recommended);
 
                 case 'continue-watching':
                     return Array.isArray(watchHistory) ? watchHistory.slice(0, 12) : [];
 
                 case 'popular':
                     if (!Array.isArray(videos)) return [];
-                    return videos.filter(v => v && v.viewCount && v.viewCount > 1000)
-                        .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+                    return videos.filter(v => v && v.view_count && v.view_count > 1000)
+                        .sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
 
                 default:
                     return Array.isArray(videos) ? videos : [];
@@ -250,16 +268,11 @@ const HomePage = () => {
         }
     }, [activeSection, videos, trendingVideos, watchHistory]);
 
-    // Filtrage par catégorie avec protection
+    // Filtrage par catégorie
     const filteredData = useMemo(() => {
         try {
-            if (!Array.isArray(currentData)) {
-                return [];
-            }
-
-            if (category === 'all') {
-                return currentData;
-            }
+            if (!Array.isArray(currentData)) return [];
+            if (category === 'all') return currentData;
 
             return currentData.filter(video => {
                 if (!video || !video.category) return false;
@@ -303,27 +316,13 @@ const HomePage = () => {
         }
     };
 
-    // Changement de section
-    const handleSectionChange = (sectionId) => {
-        setActiveSection(sectionId);
-    };
-
-    // Changement de période
-    const handleTimeframeChange = (newTimeframe) => {
-        setTimeframe(newTimeframe);
-    };
-
-    // Changement de catégorie
-    const handleCategoryChange = (newCategory) => {
-        setCategory(newCategory);
-    };
-
-    // Navigation vers une vidéo selon Video.findById de la doc
+    // Navigation vers une vidéo selon Video.findById et video.incrementViews()
     const handleVideoClick = (video) => {
         if (video && video.id) {
             // Incrémenter les vues selon video.incrementViews() de la doc
             if (user) {
-                fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${API_ENDPOINTS.VIDEOS.VIEW}/${video.id}`, {
+                const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+                fetch(`${apiUrl}${API_ENDPOINTS.VIDEOS.VIEW}/${video.id}`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('frutiger_access_token')}`,
@@ -332,11 +331,12 @@ const HomePage = () => {
                 }).catch(console.error);
             }
 
+            // Navigation vers la page vidéo
             window.location.href = `/video/${video.id}`;
         }
     };
 
-    // Animation variants
+    // Animation variants pour Framer Motion
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -374,6 +374,7 @@ const HomePage = () => {
         }
     };
 
+    // Gestion des erreurs avec affichage Frutiger Aero
     if (error) {
         return (
             <div className="page-container">
@@ -410,7 +411,7 @@ const HomePage = () => {
                 initial="hidden"
                 animate="visible"
             >
-                {/* Hero Section avec style Frutiger Aero */}
+                {/* Hero Section avec style Frutiger Aero corrigé */}
                 <motion.section
                     className="hero-section frutiger-aurora-bg relative py-20 px-6"
                     variants={itemVariants}
@@ -440,7 +441,7 @@ const HomePage = () => {
                     </div>
                 </motion.section>
 
-                {/* Navigation des sections avec style Frutiger */}
+                {/* Navigation des sections */}
                 <motion.section
                     className="sections-nav px-6 py-8"
                     variants={itemVariants}
@@ -452,7 +453,7 @@ const HomePage = () => {
                                 return (
                                     <button
                                         key={section.id}
-                                        onClick={() => handleSectionChange(section.id)}
+                                        onClick={() => setActiveSection(section.id)}
                                         className={`nav-tab frutiger-btn flex items-center gap-2 ${
                                             activeSection === section.id
                                                 ? 'frutiger-btn-primary-aero'
@@ -495,7 +496,7 @@ const HomePage = () => {
                                 </button>
                             </div>
 
-                            {/* Rafraîchir (pour les tendances) */}
+                            {/* Rafraîchir */}
                             {activeSection === 'trending' && (
                                 <button
                                     onClick={handleRefreshTrending}
@@ -517,7 +518,7 @@ const HomePage = () => {
                                     exit={{ opacity: 0, height: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    {/* Période (pour les tendances) */}
+                                    {/* Période pour tendances */}
                                     {activeSection === 'trending' && (
                                         <div className="filter-group mb-4">
                                             <label className="block text-white font-medium mb-3">Période :</label>
@@ -525,7 +526,7 @@ const HomePage = () => {
                                                 {timeframes.map(tf => (
                                                     <button
                                                         key={tf.value}
-                                                        onClick={() => handleTimeframeChange(tf.value)}
+                                                        onClick={() => setTimeframe(tf.value)}
                                                         className={`frutiger-btn frutiger-btn-small ${
                                                             timeframe === tf.value
                                                                 ? 'frutiger-btn-primary-aero'
@@ -544,7 +545,7 @@ const HomePage = () => {
                                         <label className="block text-white font-medium mb-3">Catégorie :</label>
                                         <div className="filter-buttons flex flex-wrap gap-2">
                                             <button
-                                                onClick={() => handleCategoryChange('all')}
+                                                onClick={() => setCategory('all')}
                                                 className={`frutiger-btn frutiger-btn-small ${
                                                     category === 'all'
                                                         ? 'frutiger-btn-primary-aero'
@@ -556,7 +557,7 @@ const HomePage = () => {
                                             {categories.map(cat => (
                                                 <button
                                                     key={cat}
-                                                    onClick={() => handleCategoryChange(cat)}
+                                                    onClick={() => setCategory(cat)}
                                                     className={`frutiger-btn frutiger-btn-small ${
                                                         category === cat
                                                             ? 'frutiger-btn-primary-aero'
@@ -632,7 +633,7 @@ const HomePage = () => {
                     </div>
                 </motion.main>
 
-                {/* Sections supplémentaires pour utilisateurs connectés */}
+                {/* Sections personnalisées pour utilisateurs connectés */}
                 {user && (
                     <motion.section
                         className="user-sections px-6 pb-12"
@@ -647,7 +648,7 @@ const HomePage = () => {
                     </motion.section>
                 )}
 
-                {/* Statistiques et insights */}
+                {/* Statistiques */}
                 <motion.section
                     className="insights-section px-6 pb-12"
                     variants={itemVariants}
@@ -726,7 +727,7 @@ const VideoListItem = ({ video, onClick, showChannel, showStats }) => {
             <div className="flex gap-4">
                 <div className="video-thumbnail relative flex-shrink-0 w-48 aspect-video rounded-lg overflow-hidden">
                     <img
-                        src={video.thumbnail || '/assets/default-thumbnail.png'}
+                        src={video.thumbnail_url || '/assets/default-thumbnail.png'}
                         alt={video.title}
                         className="w-full h-full object-cover"
                     />
@@ -745,7 +746,7 @@ const VideoListItem = ({ video, onClick, showChannel, showStats }) => {
                     {showChannel && video.user && (
                         <div className="video-channel flex items-center gap-2 mb-3">
                             <img
-                                src={video.user.avatar || '/assets/default-avatar.png'}
+                                src={video.user.avatar_url || '/assets/default-avatar.png'}
                                 alt={video.user.username}
                                 className="w-6 h-6 rounded-full"
                             />
@@ -755,11 +756,11 @@ const VideoListItem = ({ video, onClick, showChannel, showStats }) => {
 
                     {showStats && (
                         <div className="video-stats flex items-center gap-4 text-white/60 text-sm">
-                            <span>{formatCompactNumber(video.viewCount || 0)} vues</span>
+                            <span>{formatCompactNumber(video.view_count || 0)} vues</span>
                             <span>•</span>
-                            <span>{formatRelativeTime(video.createdAt)}</span>
+                            <span>{formatRelativeTime(video.created_at)}</span>
                             <span>•</span>
-                            <span>{formatCompactNumber(video.likesCount || 0)} likes</span>
+                            <span>{formatCompactNumber(video.likes_count || 0)} likes</span>
                         </div>
                     )}
 
@@ -886,12 +887,12 @@ const UserPersonalizedSections = ({ userPlaylists, favorites, watchLater, onVide
                             <div key={playlist.id} className="playlist-card frutiger-glass-success p-4 rounded-xl cursor-pointer frutiger-transition hover:scale-105">
                                 <div className="playlist-thumbnail relative aspect-video rounded-lg overflow-hidden mb-3">
                                     <img
-                                        src={playlist.thumbnail || '/assets/default-thumbnail.png'}
+                                        src={playlist.thumbnail_url || '/assets/default-thumbnail.png'}
                                         alt={playlist.title}
                                         className="w-full h-full object-cover"
                                     />
                                     <span className="absolute bottom-2 right-2 frutiger-glass-info px-2 py-1 rounded text-xs text-white">
-                                        {playlist.videoCount || 0} vidéos
+                                        {playlist.video_count || 0} vidéos
                                     </span>
                                 </div>
                                 <h4 className="text-white font-medium mb-1">{playlist.title}</h4>

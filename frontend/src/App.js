@@ -23,11 +23,8 @@ import SearchPage from './pages/SearchPage';
 // Route Protection
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
-// Hooks
+// Hooks corrigés selon la documentation backend
 import { useAuth } from './hooks/useAuth';
-
-// Services
-import { authService } from './services/authService';
 
 // Styles
 import './styles/components/header.css';
@@ -37,37 +34,25 @@ import './styles/components/video-player.css';
 
 function App() {
     const location = useLocation();
-    const { user, isLoading: authLoading, login } = useAuth();
-    const [isInitialized, setIsInitialized] = useState(false);
+    // Utilisation du hook useAuth corrigé selon authStore.js
+    const { user, isLoading: authLoading, isInitialized, actions } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Initialisation de l'application
+    // Initialisation de l'application selon la doc backend
     useEffect(() => {
         const initApp = async () => {
             try {
-                // Vérifier s'il y a un token stocké et tenter la reconnexion auto
-                const token = localStorage.getItem('accessToken');
-                if (token) {
-                    try {
-                        const userData = await authService.verifyToken();
-                        if (userData) {
-                            login(userData, token);
-                        }
-                    } catch (error) {
-                        // Token invalide, on supprime
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                    }
+                // Initialisation selon authStore.js
+                if (!isInitialized) {
+                    await actions.initialize();
                 }
             } catch (error) {
                 console.error('Error during app initialization:', error);
-            } finally {
-                setIsInitialized(true);
             }
         };
 
         initApp();
-    }, [login]);
+    }, [isInitialized, actions]);
 
     // Gestion de la fermeture de la sidebar sur changement de route
     useEffect(() => {
@@ -108,7 +93,7 @@ function App() {
     // Définition des routes qui ne nécessitent pas le header/footer
     const isAuthPage = ['/login', '/register'].includes(location.pathname);
 
-    // Affichage du loader pendant l'initialisation
+    // Affichage du loader pendant l'initialisation selon authStore.js
     if (!isInitialized || authLoading) {
         return (
             <div className="app-initializing">
@@ -136,7 +121,7 @@ function App() {
                 <meta name="theme-color" content="#0078c8" />
             </Helmet>
 
-            {/* Background Aurora Effect */}
+            {/* Background Aurora Effect authentique Frutiger Aero */}
             <div className="aurora-background" aria-hidden="true">
                 <div className="aurora-layer aurora-layer-1"></div>
                 <div className="aurora-layer aurora-layer-2"></div>
@@ -170,9 +155,7 @@ function App() {
                             {/* Routes publiques */}
                             <Route
                                 path="/"
-                                element={
-                                    <HomePage />
-                                }
+                                element={<HomePage />}
                             />
 
                             <Route
@@ -205,7 +188,7 @@ function App() {
                                 element={<ProfilePage />}
                             />
 
-                            {/* Routes protégées */}
+                            {/* Routes protégées selon ProtectedRoute.js corrigé */}
                             <Route
                                 path="/upload"
                                 element={

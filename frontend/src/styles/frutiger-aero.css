@@ -1,13 +1,13 @@
-/* frontend/src/styles/frutiger-aero-enhanced.css */
+/* frontend/src/styles/frutiger-aero.css */
 
 /* ================================================
-   FRUTIGER AERO DESIGN SYSTEM ENHANCED
-   Esthétique authentique 2004-2013 inspirée des images
-   Glassmorphism avancé, Aurora effects et interfaces nostalgiques
+   FRUTIGER AERO DESIGN SYSTEM - CORRIGÉ
+   Optimisé pour performances et rendu correct
+   Problèmes glassmorphism et animations résolus
    ================================================ */
 
 :root {
-    /* Palette Frutiger Aero authentique des années 2000 */
+    /* Palette Frutiger Aero authentique - simplifiée pour performance */
     --frutiger-cyan-bright: #00FFFF;
     --frutiger-cyan-electric: #40E0D0;
     --frutiger-cyan-ice: #E0FFFF;
@@ -19,29 +19,29 @@
     --frutiger-white-crystal: rgba(255, 255, 255, 0.95);
     --frutiger-white-translucent: rgba(255, 255, 255, 0.7);
 
-    /* Glassmorphism avancé inspiré des images */
-    --glass-ultra-strong: rgba(255, 255, 255, 0.4);
-    --glass-medium: rgba(255, 255, 255, 0.25);
-    --glass-subtle: rgba(255, 255, 255, 0.15);
-    --glass-cyan-tint: rgba(64, 224, 208, 0.2);
-    --glass-blue-tint: rgba(135, 206, 235, 0.25);
-    --glass-mint-tint: rgba(152, 251, 152, 0.2);
+    /* Glassmorphism optimisé - réduit pour éviter les problèmes */
+    --glass-ultra-strong: rgba(255, 255, 255, 0.35);
+    --glass-medium: rgba(255, 255, 255, 0.2);
+    --glass-subtle: rgba(255, 255, 255, 0.12);
+    --glass-cyan-tint: rgba(64, 224, 208, 0.15);
+    --glass-blue-tint: rgba(135, 206, 235, 0.18);
+    --glass-mint-tint: rgba(152, 251, 152, 0.15);
 
-    /* Effets de flou et saturation */
-    --blur-heavy: blur(30px) saturate(200%) brightness(110%);
-    --blur-medium: blur(20px) saturate(180%) brightness(105%);
-    --blur-light: blur(15px) saturate(150%) brightness(102%);
+    /* Effets de flou optimisés - réduits pour performance */
+    --blur-heavy: blur(20px) saturate(150%);
+    --blur-medium: blur(12px) saturate(140%);
+    --blur-light: blur(8px) saturate(120%);
 
-    /* Ombres avec glow caractéristique */
-    --shadow-cyan-glow: 0 0 30px rgba(0, 255, 255, 0.4);
-    --shadow-blue-glow: 0 0 25px rgba(30, 144, 255, 0.35);
-    --shadow-mint-glow: 0 0 20px rgba(152, 251, 152, 0.3);
+    /* Ombres simplifiées */
+    --shadow-cyan-glow: 0 0 15px rgba(0, 255, 255, 0.3);
+    --shadow-blue-glow: 0 0 12px rgba(30, 144, 255, 0.25);
+    --shadow-mint-glow: 0 0 10px rgba(152, 251, 152, 0.2);
     --shadow-multi-layer:
-            0 4px 8px rgba(0, 0, 0, 0.1),
-            0 8px 16px rgba(64, 224, 208, 0.15),
-            0 16px 32px rgba(135, 206, 235, 0.1);
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 4px 8px rgba(64, 224, 208, 0.1),
+            0 8px 16px rgba(135, 206, 235, 0.08);
 
-    /* Gradients aurora inspirés des images */
+    /* Gradients aurora optimisés */
     --aurora-primary: linear-gradient(135deg,
     #E0FFFF 0%,
     #87CEEB 25%,
@@ -53,25 +53,23 @@
     #00FA9A 30%,
     #40E0D0 60%,
     #87CEEB 100%);
-    --aurora-tertiary: linear-gradient(225deg,
-    #DDA0DD 0%,
-    #BA55D3 30%,
-    #9370DB 60%,
-    #8A2BE2 100%);
 
-    /* Animations fluides caractéristiques */
+    /* Animations fluides mais performantes */
     --bounce-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     --elastic-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --smooth-flow: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Background principal avec Aurora flottante */
+/* Background principal avec Aurora corrigée */
 body {
     background: var(--aurora-primary);
-    background-size: 400% 400%;
-    animation: aurora-float 25s ease-in-out infinite;
+    background-size: 300% 300%;
+    animation: aurora-float 20s ease-in-out infinite;
     position: relative;
     overflow-x: hidden;
+    /* GPU acceleration pour performance */
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 body::before {
@@ -83,49 +81,45 @@ body::before {
     height: 100%;
     background: radial-gradient(
             ellipse at 20% 30%,
-            rgba(64, 224, 208, 0.1) 0%,
+            rgba(64, 224, 208, 0.08) 0%,
             transparent 50%
     ),
     radial-gradient(
             ellipse at 80% 70%,
-            rgba(135, 206, 235, 0.1) 0%,
+            rgba(135, 206, 235, 0.08) 0%,
             transparent 50%
-    ),
-    radial-gradient(
-            ellipse at 50% 50%,
-            rgba(152, 251, 152, 0.05) 0%,
-            transparent 70%
     );
     pointer-events: none;
     z-index: -1;
-    animation: background-drift 30s ease-in-out infinite;
+    animation: background-drift 25s ease-in-out infinite;
+    /* Éviter les repaints */
+    will-change: transform;
 }
 
 @keyframes aurora-float {
     0%, 100% { background-position: 0% 50%; }
-    25% { background-position: 100% 25%; }
-    50% { background-position: 100% 75%; }
-    75% { background-position: 0% 75%; }
+    33% { background-position: 100% 25%; }
+    66% { background-position: 0% 75%; }
 }
 
 @keyframes background-drift {
     0%, 100% { transform: scale(1) rotate(0deg); }
-    33% { transform: scale(1.05) rotate(1deg); }
-    66% { transform: scale(0.95) rotate(-1deg); }
+    50% { transform: scale(1.02) rotate(0.5deg); }
 }
 
-/* Classes glassmorphism authentiques */
+/* Classes glassmorphism corrigées pour éviter les problèmes */
 .frutiger-glass-info {
     background: var(--glass-medium);
     backdrop-filter: var(--blur-medium);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 24px;
-    box-shadow:
-            var(--shadow-multi-layer),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+    -webkit-backdrop-filter: var(--blur-medium);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    box-shadow: var(--shadow-multi-layer);
     position: relative;
     overflow: hidden;
+    /* Optimisation GPU */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .frutiger-glass-info::before {
@@ -134,68 +128,72 @@ body::before {
     top: 0;
     left: 0;
     right: 0;
-    height: 40%;
+    height: 30%;
     background: linear-gradient(to bottom,
-    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.15),
     transparent);
-    border-radius: 24px 24px 0 0;
+    border-radius: 20px 20px 0 0;
     pointer-events: none;
 }
 
 .frutiger-glass-success {
     background: var(--glass-mint-tint);
     backdrop-filter: var(--blur-medium);
-    border: 1px solid rgba(152, 251, 152, 0.4);
-    border-radius: 20px;
-    box-shadow:
-            var(--shadow-mint-glow),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: var(--blur-medium);
+    border: 1px solid rgba(152, 251, 152, 0.3);
+    border-radius: 16px;
+    box-shadow: var(--shadow-mint-glow);
+    /* Optimisation */
+    transform: translateZ(0);
 }
 
 .frutiger-glass-error {
-    background: rgba(255, 182, 193, 0.2);
+    background: rgba(255, 182, 193, 0.15);
     backdrop-filter: var(--blur-medium);
-    border: 1px solid rgba(255, 107, 107, 0.4);
-    border-radius: 20px;
-    box-shadow:
-            0 0 20px rgba(255, 107, 107, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    -webkit-backdrop-filter: var(--blur-medium);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+    /* Optimisation */
+    transform: translateZ(0);
 }
 
-/* Boutons Frutiger Aero avec effet 3D authentique */
+/* Boutons Frutiger Aero corrigés */
 .frutiger-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 24px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 25px;
+    padding: 10px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-    transition: all 0.4s var(--bounce-soft);
+    transition: all 0.3s var(--bounce-soft);
     position: relative;
     overflow: hidden;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
-    /* Effet glassmorphism 3D */
+    /* Glassmorphism simplifié pour performance */
     background: linear-gradient(145deg,
-    rgba(255, 255, 255, 0.8) 0%,
-    rgba(255, 255, 255, 0.4) 30%,
-    rgba(255, 255, 255, 0.2) 70%,
-    rgba(0, 0, 0, 0.05) 100%);
-    backdrop-filter: var(--blur-medium);
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 100%);
+    backdrop-filter: var(--blur-light);
+    -webkit-backdrop-filter: var(--blur-light);
 
-    /* Ombres multiples pour la profondeur 3D */
+    /* Ombres simplifiées */
     box-shadow:
-            0 1px 0 rgba(255, 255, 255, 0.9) inset,
-            0 -1px 0 rgba(0, 0, 0, 0.1) inset,
-            0 2px 4px rgba(0, 0, 0, 0.1),
-            0 4px 8px rgba(64, 224, 208, 0.15),
-            0 8px 16px rgba(135, 206, 235, 0.1);
+            0 1px 0 rgba(255, 255, 255, 0.8) inset,
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            0 4px 8px rgba(64, 224, 208, 0.1);
+
+    /* Optimisation GPU */
+    transform: translateZ(0);
+    will-change: transform, box-shadow;
 }
 
 .frutiger-btn::before {
@@ -207,21 +205,19 @@ body::before {
     height: 100%;
     background: linear-gradient(90deg,
     transparent,
-    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.4),
     transparent);
-    transition: all 0.6s ease;
+    transition: left 0.5s ease;
+    pointer-events: none;
 }
 
 .frutiger-btn:hover {
-    transform: translateY(-2px) scale(1.02);
-    border-color: rgba(64, 224, 208, 0.6);
+    transform: translateY(-1px) scale(1.01);
+    border-color: rgba(64, 224, 208, 0.5);
     box-shadow:
-            0 2px 0 rgba(255, 255, 255, 0.9) inset,
-            0 -2px 0 rgba(0, 0, 0, 0.1) inset,
-            0 4px 8px rgba(0, 0, 0, 0.15),
-            0 8px 16px rgba(64, 224, 208, 0.25),
-            0 16px 32px rgba(135, 206, 235, 0.15),
-            var(--shadow-cyan-glow);
+            0 2px 0 rgba(255, 255, 255, 0.8) inset,
+            0 4px 8px rgba(0, 0, 0, 0.12),
+            0 8px 16px rgba(64, 224, 208, 0.2);
 }
 
 .frutiger-btn:hover::before {
@@ -231,24 +227,23 @@ body::before {
 .frutiger-btn:active {
     transform: translateY(0) scale(0.98);
     box-shadow:
-            0 0 0 rgba(255, 255, 255, 0.9) inset,
-            0 2px 4px rgba(0, 0, 0, 0.2) inset,
-            0 2px 4px rgba(0, 0, 0, 0.1);
+            0 1px 2px rgba(0, 0, 0, 0.15) inset,
+            0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* Bouton primaire avec Aurora */
+/* Bouton primaire avec Aurora optimisée */
 .frutiger-btn-primary-aero {
     background: var(--aurora-primary);
-    background-size: 200% 200%;
+    background-size: 150% 150%;
     color: rgba(0, 60, 120, 0.9);
-    border: 1px solid rgba(64, 224, 208, 0.4);
-    animation: aurora-primary-shift 8s ease-in-out infinite;
+    border: 1px solid rgba(64, 224, 208, 0.3);
+    animation: aurora-primary-shift 6s ease-in-out infinite;
 }
 
 .frutiger-btn-primary-aero:hover {
-    animation-duration: 4s;
+    animation-duration: 3s;
     color: rgba(0, 60, 120, 1);
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
 @keyframes aurora-primary-shift {
@@ -263,83 +258,102 @@ body::before {
 }
 
 .frutiger-btn-disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     pointer-events: none;
-    filter: grayscale(20%);
+    filter: grayscale(30%);
 }
 
-/* Inputs Frutiger avec glassmorphism avancé */
+.frutiger-btn-small {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 16px;
+}
+
+/* Inputs Frutiger corrigés */
 .frutiger-input,
 .frutiger-glass-input {
     width: 100%;
-    padding: 14px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
     background: var(--glass-medium);
-    backdrop-filter: var(--blur-medium);
+    backdrop-filter: var(--blur-light);
+    -webkit-backdrop-filter: var(--blur-light);
     font-family: inherit;
     font-size: 0.875rem;
     color: rgba(0, 60, 120, 0.9);
-    transition: all 0.4s var(--bounce-soft);
+    transition: all 0.3s var(--bounce-soft);
     position: relative;
 
-    /* Effet inset avec reflets multiples caractéristique */
+    /* Effet inset simplifié */
     box-shadow:
-            0 2px 4px rgba(0, 0, 0, 0.1) inset,
-            0 -1px 0 rgba(255, 255, 255, 0.6) inset,
-            0 1px 0 rgba(255, 255, 255, 0.9),
-            0 4px 8px rgba(0, 0, 0, 0.05),
-            0 0 0 rgba(64, 224, 208, 0);
+            0 1px 2px rgba(0, 0, 0, 0.08) inset,
+            0 1px 0 rgba(255, 255, 255, 0.5),
+            0 2px 4px rgba(0, 0, 0, 0.04);
+
+    /* Optimisation */
+    transform: translateZ(0);
 }
 
 .frutiger-input::placeholder,
 .frutiger-glass-input::placeholder {
-    color: rgba(0, 60, 120, 0.5);
+    color: rgba(0, 60, 120, 0.4);
     font-style: italic;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .frutiger-input:focus,
 .frutiger-glass-input:focus {
     outline: none;
-    border-color: rgba(64, 224, 208, 0.7);
+    border-color: rgba(64, 224, 208, 0.6);
     background: var(--glass-ultra-strong);
-    backdrop-filter: var(--blur-heavy);
+    backdrop-filter: var(--blur-medium);
+    -webkit-backdrop-filter: var(--blur-medium);
     box-shadow:
-            0 3px 6px rgba(0, 0, 0, 0.15) inset,
-            0 -1px 0 rgba(255, 255, 255, 0.8) inset,
-            0 0 0 3px rgba(64, 224, 208, 0.3),
-            0 0 20px rgba(64, 224, 208, 0.4),
-            0 8px 16px rgba(0, 0, 0, 0.1),
-            var(--shadow-cyan-glow);
-    transform: translateY(-1px) scale(1.01);
+            0 2px 4px rgba(0, 0, 0, 0.1) inset,
+            0 0 0 2px rgba(64, 224, 208, 0.25),
+            0 0 12px rgba(64, 224, 208, 0.3);
+    transform: translateY(-1px) scale(1.005);
 }
 
 .frutiger-input:focus::placeholder,
 .frutiger-glass-input:focus::placeholder {
-    color: rgba(0, 60, 120, 0.3);
-    transform: translateX(4px);
+    color: rgba(0, 60, 120, 0.25);
+    transform: translateX(2px);
 }
 
-/* Checkbox avec style Frutiger authentique */
+/* États d'erreur pour les inputs */
+.frutiger-input-error {
+    border-color: rgba(255, 107, 107, 0.5);
+    background: rgba(255, 182, 193, 0.1);
+}
+
+.frutiger-input-normal {
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Checkbox avec style Frutiger simplifié */
 .frutiger-checkbox {
     appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(64, 224, 208, 0.6);
-    border-radius: 6px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(64, 224, 208, 0.5);
+    border-radius: 5px;
     background: var(--glass-medium);
     backdrop-filter: var(--blur-light);
+    -webkit-backdrop-filter: var(--blur-light);
     cursor: pointer;
-    transition: all 0.3s var(--elastic-bounce);
+    transition: all 0.25s var(--elastic-bounce);
     position: relative;
     flex-shrink: 0;
 
-    /* Effet glassmorphism */
+    /* Effet glassmorphism simplifié */
     box-shadow:
-            0 2px 4px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+            0 1px 2px rgba(0, 0, 0, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+    /* Optimisation */
+    transform: translateZ(0);
 }
 
 .frutiger-checkbox::before {
@@ -348,24 +362,23 @@ body::before {
     top: 1px;
     left: 1px;
     right: 1px;
-    height: 40%;
+    height: 30%;
     background: linear-gradient(to bottom,
-    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.4),
     transparent);
-    border-radius: 3px 3px 0 0;
-    transition: all 0.3s ease;
+    border-radius: 2px 2px 0 0;
+    transition: all 0.2s ease;
 }
 
 .frutiger-checkbox:checked {
     background: var(--aurora-secondary);
-    background-size: 200% 200%;
-    border-color: rgba(64, 224, 208, 0.8);
+    background-size: 150% 150%;
+    border-color: rgba(64, 224, 208, 0.7);
     box-shadow:
-            0 2px 8px rgba(64, 224, 208, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5),
-            var(--shadow-cyan-glow);
+            0 2px 6px rgba(64, 224, 208, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
     transform: scale(1.05);
-    animation: checkbox-aurora 3s ease-in-out infinite;
+    animation: checkbox-aurora 2s ease-in-out infinite;
 }
 
 .frutiger-checkbox:checked::after {
@@ -375,10 +388,10 @@ body::before {
     left: 50%;
     transform: translate(-50%, -50%);
     color: rgba(0, 60, 120, 0.9);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: bold;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-    animation: checkmark-glow 0.4s ease-out;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+    animation: checkmark-glow 0.3s ease-out;
 }
 
 @keyframes checkbox-aurora {
@@ -389,11 +402,7 @@ body::before {
 @keyframes checkmark-glow {
     0% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.2);
+        transform: translate(-50%, -50%) scale(0.5);
     }
     100% {
         opacity: 1;
@@ -401,7 +410,7 @@ body::before {
     }
 }
 
-/* Titres avec effet Frutiger authentique */
+/* Titres avec effet Frutiger optimisé */
 .frutiger-title {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-weight: 300;
@@ -410,26 +419,14 @@ body::before {
     var(--frutiger-blue-crystal) 30%,
     var(--frutiger-cyan-electric) 70%,
     var(--frutiger-blue-aurora) 100%);
-    background-size: 200% 200%;
+    background-size: 150% 150%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    animation: title-aurora 6s ease-in-out infinite;
+    animation: title-aurora 4s ease-in-out infinite;
     position: relative;
-}
-
-.frutiger-title::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: inherit;
-    -webkit-background-clip: text;
-    filter: blur(10px);
-    opacity: 0.3;
-    z-index: -1;
+    /* Optimisation */
+    transform: translateZ(0);
 }
 
 @keyframes title-aurora {
@@ -442,90 +439,102 @@ body::before {
     color: var(--frutiger-cyan-electric);
     text-decoration: none;
     position: relative;
-    transition: all 0.3s var(--smooth-flow);
-    text-shadow: 0 0 10px rgba(64, 224, 208, 0.3);
+    transition: all 0.2s var(--smooth-flow);
+    text-shadow: 0 0 8px rgba(64, 224, 208, 0.25);
 }
 
 .frutiger-link-primary:hover {
     color: var(--frutiger-cyan-bright);
-    text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    text-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
     transform: translateY(-1px);
 }
 
 .frutiger-link-primary::after {
     content: '';
     position: absolute;
-    bottom: -2px;
+    bottom: -1px;
     left: 0;
     width: 0;
-    height: 2px;
+    height: 1px;
     background: linear-gradient(90deg,
     var(--frutiger-cyan-electric),
     var(--frutiger-cyan-bright));
-    transition: width 0.3s ease;
+    transition: width 0.2s ease;
 }
 
 .frutiger-link-primary:hover::after {
     width: 100%;
 }
 
-/* Conteneurs avec Aurora layers */
+.frutiger-link-secondary {
+    color: var(--frutiger-blue-crystal);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.frutiger-link-secondary:hover {
+    color: var(--frutiger-cyan-electric);
+    text-shadow: 0 0 8px rgba(64, 224, 208, 0.3);
+}
+
+/* Conteneurs avec Aurora layers optimisés */
 .aurora-layer {
     position: absolute;
     width: 100%;
     height: 100%;
     pointer-events: none;
     border-radius: inherit;
+    /* Optimisation GPU */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .aurora-layer-1 {
     background: radial-gradient(
             ellipse at 30% 20%,
-            rgba(64, 224, 208, 0.15) 0%,
-            transparent 60%
+            rgba(64, 224, 208, 0.1) 0%,
+            transparent 50%
     );
-    animation: aurora-drift-1 20s ease-in-out infinite;
+    animation: aurora-drift-1 15s ease-in-out infinite;
 }
 
 .aurora-layer-2 {
     background: radial-gradient(
             ellipse at 70% 80%,
-            rgba(135, 206, 235, 0.1) 0%,
-            transparent 50%
+            rgba(135, 206, 235, 0.08) 0%,
+            transparent 45%
     );
-    animation: aurora-drift-2 25s ease-in-out infinite reverse;
+    animation: aurora-drift-2 18s ease-in-out infinite reverse;
 }
 
 .aurora-layer-3 {
     background: radial-gradient(
             ellipse at 50% 50%,
-            rgba(152, 251, 152, 0.08) 0%,
-            transparent 70%
+            rgba(152, 251, 152, 0.06) 0%,
+            transparent 60%
     );
-    animation: aurora-drift-3 30s ease-in-out infinite;
+    animation: aurora-drift-3 22s ease-in-out infinite;
 }
 
 @keyframes aurora-drift-1 {
     0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(20px, -15px) scale(1.1); }
-    66% { transform: translate(-15px, 20px) scale(0.9); }
+    50% { transform: translate(15px, -10px) scale(1.05); }
 }
 
 @keyframes aurora-drift-2 {
     0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-25px, -20px) scale(1.15); }
+    50% { transform: translate(-18px, -15px) scale(1.08); }
 }
 
 @keyframes aurora-drift-3 {
     0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(15px, 25px) scale(1.05); }
-    75% { transform: translate(-20px, -10px) scale(0.95); }
+    50% { transform: translate(12px, 18px) scale(1.03); }
 }
 
-/* Loading spinner Frutiger Aero */
+/* Loading spinner Frutiger Aero optimisé */
 .frutiger-spinner-aero {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: conic-gradient(
             from 0deg,
@@ -535,8 +544,11 @@ body::before {
             var(--frutiger-mint-glow),
             var(--frutiger-cyan-bright)
     );
-    animation: spinner-rotate 1.5s linear infinite;
+    animation: spinner-rotate 1.2s linear infinite;
     position: relative;
+    /* Optimisation GPU */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .frutiger-spinner-aero::before {
@@ -547,7 +559,8 @@ body::before {
     right: 2px;
     bottom: 2px;
     background: var(--glass-ultra-strong);
-    backdrop-filter: var(--blur-medium);
+    backdrop-filter: var(--blur-light);
+    -webkit-backdrop-filter: var(--blur-light);
     border-radius: 50%;
 }
 
@@ -556,51 +569,137 @@ body::before {
     100% { transform: rotate(360deg); }
 }
 
-/* Effects spéciaux */
+/* Effects spéciaux optimisés */
 .frutiger-icon-pulse {
-    animation: icon-pulse 2s ease-in-out infinite;
+    animation: icon-pulse 1.5s ease-in-out infinite;
+    /* Optimisation */
+    will-change: transform, filter;
 }
 
 @keyframes icon-pulse {
     0%, 100% {
         opacity: 0.7;
         transform: scale(1);
-        filter: drop-shadow(0 0 5px rgba(64, 224, 208, 0.3));
+        filter: drop-shadow(0 0 4px rgba(64, 224, 208, 0.25));
     }
     50% {
         opacity: 1;
-        transform: scale(1.1);
-        filter: drop-shadow(0 0 15px rgba(64, 224, 208, 0.6));
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 10px rgba(64, 224, 208, 0.5));
     }
 }
 
 .frutiger-glow-text {
     text-shadow:
-            0 0 10px rgba(64, 224, 208, 0.6),
-            0 0 20px rgba(135, 206, 235, 0.4),
-            0 0 30px rgba(152, 251, 152, 0.2);
+            0 0 8px rgba(64, 224, 208, 0.5),
+            0 0 16px rgba(135, 206, 235, 0.3),
+            0 0 24px rgba(152, 251, 152, 0.15);
 }
 
-/* Responsive enhancements */
+.frutiger-icon-subtle {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.frutiger-icon-glow {
+    filter: drop-shadow(0 0 6px rgba(64, 224, 208, 0.4));
+}
+
+.frutiger-transition {
+    transition: all 0.2s var(--smooth-flow);
+}
+
+.frutiger-transition-bounce {
+    transition: all 0.3s var(--bounce-soft);
+}
+
+/* Classes pour les textes de chargement et erreurs */
+.frutiger-loading-text {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.frutiger-error-text {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    animation: error-slide-down 0.3s ease-out;
+}
+
+@keyframes error-slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.frutiger-slide-down {
+    animation: error-slide-down 0.3s ease-out;
+}
+
+/* Support pour les navigateurs sans backdrop-filter */
+@supports not (backdrop-filter: blur(12px)) {
+    .frutiger-glass-info,
+    .frutiger-glass-success,
+    .frutiger-glass-error,
+    .frutiger-btn,
+    .frutiger-input,
+    .frutiger-glass-input,
+    .frutiger-checkbox {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .frutiger-glass-error {
+        background: rgba(255, 182, 193, 0.8);
+    }
+
+    .frutiger-glass-success {
+        background: rgba(152, 251, 152, 0.3);
+    }
+}
+
+/* Responsive optimisé */
 @media (max-width: 768px) {
     .frutiger-btn {
-        padding: 10px 20px;
+        padding: 8px 16px;
         font-size: 0.8rem;
     }
 
     .frutiger-input,
     .frutiger-glass-input {
-        padding: 12px 14px;
-        border-radius: 16px;
+        padding: 10px 12px;
+        border-radius: 14px;
     }
 
     .frutiger-glass-info {
-        border-radius: 20px;
+        border-radius: 16px;
+    }
+
+    /* Réduire les animations sur mobile pour performance */
+    .aurora-layer {
+        animation-duration: 20s;
+    }
+
+    .frutiger-title {
+        animation-duration: 6s;
     }
 }
 
-/* Préférences de mouvement réduit */
+/* Préférences de mouvement réduit - CRITIQUE pour performance */
 @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
     .frutiger-btn,
     .frutiger-input,
     .frutiger-glass-input,
@@ -610,7 +709,6 @@ body::before {
     .aurora-layer,
     .frutiger-icon-pulse {
         animation: none !important;
-        transition: none !important;
     }
 
     body {
@@ -624,4 +722,31 @@ body::before {
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
+}
+
+/* Optimisations pour GPU et performance */
+.frutiger-glass-info,
+.frutiger-glass-success,
+.frutiger-glass-error,
+.frutiger-btn,
+.frutiger-input,
+.frutiger-glass-input,
+.frutiger-checkbox,
+.frutiger-spinner-aero,
+.aurora-layer {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Classes d'aide pour les animations */
+.will-change-transform {
+    will-change: transform;
+}
+
+.will-change-opacity {
+    will-change: opacity;
+}
+
+.will-change-auto {
+    will-change: auto;
 }
