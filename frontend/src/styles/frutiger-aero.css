@@ -2,641 +2,86 @@
 
 /* ================================================
    FRUTIGER AERO DESIGN SYSTEM
-   Esthétique authentique 2004-2013 modernisée
+   Esthétique authentique 2004-2013 inspirée des images
+   Glassmorphism, Aurora effects, et interfaces nostalgiques
    ================================================ */
 
-/* Boutons Frutiger Aero avec effet glossy caractéristique */
+/* Variables CSS étendues pour Frutiger Aero authentique */
+:root {
+    /* Aurora gradients inspirés des images */
+    --frutiger-aurora-blue: linear-gradient(135deg, #87CEEB 0%, #4682B4 50%, #1E90FF 100%);
+    --frutiger-aurora-green: linear-gradient(135deg, #98FB98 0%, #32CD32 50%, #228B22 100%);
+    --frutiger-aurora-cyan: linear-gradient(135deg, #E0FFFF 0%, #AFEEEE 50%, #40E0D0 100%);
+
+    /* Glassmorphism avancé */
+    --frutiger-glass-ultra: rgba(255, 255, 255, 0.15);
+    --frutiger-glass-medium: rgba(255, 255, 255, 0.25);
+    --frutiger-glass-strong: rgba(255, 255, 255, 0.35);
+    --frutiger-backdrop-heavy: blur(25px) saturate(200%);
+
+    /* Ombres avec profondeur Frutiger */
+    --frutiger-shadow-glow: 0 0 20px rgba(135, 206, 235, 0.4);
+    --frutiger-shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --frutiger-shadow-float: 0 12px 40px rgba(70, 130, 180, 0.25);
+
+    /* Animations fluides */
+    --frutiger-transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --frutiger-transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --frutiger-transition-elastic: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Background Aurora principal inspiré des images */
+body {
+    background: linear-gradient(135deg,
+    #E6F3FF 0%,
+    #B8E6FF 25%,
+    #87CEEB 50%,
+    #E0FFFF 75%,
+    #F0F8FF 100%);
+    background-attachment: fixed;
+    background-size: 400% 400%;
+    animation: aurora-background 20s ease-in-out infinite;
+}
+
+@keyframes aurora-background {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 100% 0%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+}
+
+/* Boutons Frutiger Aero avec effet glossy 3D authentique */
 .frutiger-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--frutiger-spacing-sm);
     padding: 12px 24px;
-    border: none;
-    border-radius: var(--frutiger-radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
     font-family: var(--frutiger-font-family);
     font-size: 0.875rem;
-    font-weight: 400;
-    text-decoration: none;
-    cursor: pointer;
-    transition: var(--frutiger-transition);
-    position: relative;
-    overflow: hidden;
-
-    /* Effet glossy caractéristique */
-    background: linear-gradient(to bottom,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(0, 0, 0, 0.1) 51%,
-    rgba(0, 0, 0, 0.2) 100%);
-
-    /* Ombre profonde Frutiger */
-    box-shadow:
-            0 2px 6px rgba(0, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.6),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-}
-
-.frutiger-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent);
-    transition: left 0.5s ease;
-}
-
-.frutiger-btn:hover::before {
-    left: 100%;
-}
-
-/* Variantes de boutons */
-.frutiger-btn-primary {
-    background-color: var(--frutiger-bright-blue);
-    color: var(--frutiger-white);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.frutiger-btn-primary:hover {
-    background-color: var(--frutiger-sky-blue);
-    transform: translateY(-1px);
-    box-shadow:
-            0 4px 12px rgba(0, 120, 200, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.7),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-}
-
-.frutiger-btn-secondary {
-    background-color: var(--frutiger-cyan);
-    color: var(--frutiger-deep-blue);
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.frutiger-btn-secondary:hover {
-    background-color: var(--frutiger-mint);
-    transform: translateY(-1px);
-}
-
-.frutiger-btn-glass {
-    background: var(--frutiger-glass);
-    backdrop-filter: var(--frutiger-backdrop-blur);
-    border: 1px solid var(--frutiger-glass-border);
-    color: var(--frutiger-deep-blue);
-}
-
-.frutiger-btn-glass:hover {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(255, 255, 255, 0.25);
-}
-
-.frutiger-btn-small {
-    padding: 8px 16px;
-    font-size: 0.75rem;
-    border-radius: var(--frutiger-radius-lg);
-}
-
-.frutiger-btn-large {
-    padding: 16px 32px;
-    font-size: 1rem;
-    border-radius: var(--frutiger-radius-2xl);
-}
-
-/* Cartes Frutiger Aero avec glassmorphism */
-.frutiger-card {
-    background: var(--frutiger-glass);
-    backdrop-filter: var(--frutiger-backdrop-blur);
-    border: 1px solid var(--frutiger-glass-border);
-    border-radius: var(--frutiger-radius-xl);
-    padding: var(--frutiger-spacing-lg);
-    box-shadow: var(--frutiger-shadow-lg);
-    transition: var(--frutiger-transition);
-    position: relative;
-    overflow: hidden;
-}
-
-.frutiger-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-    transparent,
-    rgba(255, 255, 255, 0.8),
-    transparent);
-}
-
-.frutiger-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--frutiger-shadow-xl);
-    border-color: rgba(255, 255, 255, 0.3);
-}
-
-.frutiger-card-interactive {
-    cursor: pointer;
-}
-
-.frutiger-card-interactive:hover {
-    background: rgba(255, 255, 255, 0.35);
-}
-
-/* Inputs Frutiger Aero */
-.frutiger-input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--frutiger-glass-border);
-    border-radius: var(--frutiger-radius-lg);
-    background: var(--frutiger-glass);
-    backdrop-filter: var(--frutiger-backdrop-blur);
-    font-family: var(--frutiger-font-family);
-    font-size: 0.875rem;
-    color: var(--frutiger-deep-blue);
-    transition: var(--frutiger-transition);
-
-    /* Effet inset subtil */
-    box-shadow:
-            inset 0 2px 4px rgba(0, 0, 0, 0.1),
-            0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.frutiger-input::placeholder {
-    color: var(--frutiger-dark-gray);
-    opacity: 0.7;
-}
-
-.frutiger-input:focus {
-    outline: none;
-    border-color: var(--frutiger-bright-blue);
-    background: rgba(255, 255, 255, 0.4);
-    box-shadow:
-            inset 0 2px 4px rgba(0, 0, 0, 0.1),
-            0 0 0 3px rgba(0, 100, 180, 0.2),
-            0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.frutiger-textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-/* Barre de recherche Frutiger Aero */
-.frutiger-search-bar {
-    position: relative;
-    display: flex;
-    align-items: center;
-    max-width: 600px;
-    width: 100%;
-}
-
-.frutiger-search-input {
-    flex: 1;
-    padding: 14px 20px 14px 48px;
-    border: 1px solid var(--frutiger-glass-border);
-    border-radius: var(--frutiger-radius-full);
-    background: var(--frutiger-glass);
-    backdrop-filter: var(--frutiger-backdrop-blur);
-    font-size: 0.875rem;
-    transition: var(--frutiger-transition);
-
-    box-shadow:
-            inset 0 2px 6px rgba(0, 0, 0, 0.1),
-            0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.frutiger-search-input:focus {
-    border-color: var(--frutiger-bright-blue);
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow:
-            inset 0 2px 6px rgba(0, 0, 0, 0.1),
-            0 0 0 3px rgba(0, 100, 180, 0.15),
-            0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.frutiger-search-icon {
-    position: absolute;
-    left: 16px;
-    color: var(--frutiger-dark-gray);
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* Navigation Frutiger Aero */
-.frutiger-nav {
-    background: var(--frutiger-glass);
-    backdrop-filter: var(--frutiger-backdrop-blur);
-    border-bottom: 1px solid var(--frutiger-glass-border);
-    padding: var(--frutiger-spacing-md) 0;
-    position: sticky;
-    top: 0;
-    z-index: var(--z-sticky);
-
-    /* Effet de profondeur */
-    box-shadow:
-            0 4px 16px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.frutiger-nav-item {
-    display: flex;
-    align-items: center;
-    gap: var(--frutiger-spacing-sm);
-    padding: 10px 16px;
-    border-radius: var(--frutiger-radius-lg);
-    color: var(--frutiger-dark-gray);
-    text-decoration: none;
-    transition: var(--frutiger-transition);
-    position: relative;
-}
-
-.frutiger-nav-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--frutiger-deep-blue);
-    transform: translateY(-1px);
-}
-
-.frutiger-nav-item.active {
-    background: var(--frutiger-gradient-primary);
-    color: var(--frutiger-white);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    box-shadow:
-            0 2px 8px rgba(0, 100, 180, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-/* Modals Frutiger Aero */
-.frutiger-modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    z-index: var(--z-modal-backdrop);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--frutiger-spacing-lg);
-}
-
-.frutiger-modal {
-    background: var(--frutiger-glass-strong);
-    backdrop-filter: blur(30px) saturate(180%);
-    border: 1px solid var(--frutiger-glass-border);
-    border-radius: var(--frutiger-radius-2xl);
-    padding: var(--frutiger-spacing-2xl);
-    max-width: 500px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-
-    box-shadow:
-            0 20px 40px rgba(0, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.frutiger-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--frutiger-spacing-lg);
-    padding-bottom: var(--frutiger-spacing-md);
-    border-bottom: 1px solid var(--frutiger-glass-border);
-}
-
-.frutiger-modal-title {
-    font-size: 1.25rem;
-    font-weight: 300;
-    color: var(--frutiger-deep-blue);
-    margin: 0;
-}
-
-/* Tooltips Frutiger Aero */
-.frutiger-tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.9);
-    color: var(--frutiger-white);
-    padding: 8px 12px;
-    border-radius: var(--frutiger-radius-md);
-    font-size: 0.75rem;
-    z-index: var(--z-tooltip);
-    pointer-events: none;
-
-    /* Effet glassmorphism sombre */
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.frutiger-tooltip::before {
-    content: '';
-    position: absolute;
-    border: 4px solid transparent;
-}
-
-.frutiger-tooltip[data-placement="top"]::before {
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-top-color: rgba(0, 0, 0, 0.9);
-}
-
-/* Notifications/Toasts Frutiger Aero */
-.frutiger-toast {
-    background: var(--frutiger-glass-strong);
-    backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid var(--frutiger-glass-border);
-    border-radius: var(--frutiger-radius-lg);
-    padding: var(--frutiger-spacing-md) var(--frutiger-spacing-lg);
-    box-shadow: var(--frutiger-shadow-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--frutiger-spacing-md);
-    min-width: 300px;
-    max-width: 500px;
-}
-
-.frutiger-toast-success {
-    border-left: 4px solid var(--frutiger-green);
-}
-
-.frutiger-toast-error {
-    border-left: 4px solid #ef4444;
-}
-
-.frutiger-toast-warning {
-    border-left: 4px solid var(--frutiger-yellow);
-}
-
-.frutiger-toast-info {
-    border-left: 4px solid var(--frutiger-bright-blue);
-}
-
-/* Badges et tags Frutiger Aero */
-.frutiger-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 12px;
-    border-radius: var(--frutiger-radius-full);
-    font-size: 0.75rem;
     font-weight: 500;
-    background: var(--frutiger-glass);
-    border: 1px solid var(--frutiger-glass-border);
-    backdrop-filter: var(--frutiger-backdrop-blur);
-
-    /* Effet glossy miniature */
-    box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.3),
-            0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.frutiger-badge-primary {
-    background: var(--frutiger-gradient-primary);
-    color: var(--frutiger-white);
-    border: none;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-}
-
-.frutiger-badge-secondary {
-    background: var(--frutiger-cyan);
-    color: var(--frutiger-deep-blue);
-}
-
-/* Progress bars Frutiger Aero */
-.frutiger-progress {
-    width: 100%;
-    height: 8px;
-    background: var(--frutiger-glass);
-    border-radius: var(--frutiger-radius-full);
-    border: 1px solid var(--frutiger-glass-border);
-    overflow: hidden;
-    position: relative;
-
-    /* Effet inset */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.frutiger-progress-bar {
-    height: 100%;
-    background: var(--frutiger-gradient-primary);
-    border-radius: var(--frutiger-radius-full);
-    transition: width 0.3s ease;
-    position: relative;
-
-    /* Effet de brillance */
-    box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.4),
-            0 1px 2px rgba(0, 100, 180, 0.3);
-}
-
-.frutiger-progress-bar::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(to bottom,
-    rgba(255, 255, 255, 0.4),
-    transparent);
-    border-radius: var(--frutiger-radius-full) var(--frutiger-radius-full) 0 0;
-}
-
-/* Switches/Toggle Frutiger Aero */
-.frutiger-switch {
-    position: relative;
-    display: inline-block;
-    width: 52px;
-    height: 28px;
-}
-
-.frutiger-switch-input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.frutiger-switch-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--frutiger-glass);
-    border: 1px solid var(--frutiger-glass-border);
-    transition: var(--frutiger-transition);
-    border-radius: var(--frutiger-radius-full);
-
-    /* Effet inset */
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.frutiger-switch-slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 3px;
-    bottom: 3px;
-    background: var(--frutiger-white);
-    transition: var(--frutiger-transition);
-    border-radius: var(--frutiger-radius-full);
-
-    /* Effet de bouton glossy */
-    box-shadow:
-            0 2px 4px rgba(0, 0, 0, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-.frutiger-switch-input:checked + .frutiger-switch-slider {
-    background: var(--frutiger-gradient-primary);
-    border-color: var(--frutiger-bright-blue);
-}
-
-.frutiger-switch-input:checked + .frutiger-switch-slider:before {
-    transform: translateX(24px);
-    box-shadow:
-            0 2px 6px rgba(0, 100, 180, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-/* Dropdowns Frutiger Aero */
-.frutiger-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.frutiger-dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--frutiger-glass-strong);
-    backdrop-filter: blur(20px) saturate(150%);
-    border: 1px solid var(--frutiger-glass-border);
-    border-radius: var(--frutiger-radius-lg);
-    box-shadow: var(--frutiger-shadow-xl);
-    z-index: var(--z-dropdown);
-    padding: var(--frutiger-spacing-sm) 0;
-    margin-top: 4px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    transition: var(--frutiger-transition);
-}
-
-.frutiger-dropdown.open .frutiger-dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.frutiger-dropdown-item {
-    display: block;
-    padding: 10px var(--frutiger-spacing-md);
-    color: var(--frutiger-dark-gray);
     text-decoration: none;
-    transition: var(--frutiger-transition);
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
     cursor: pointer;
-}
+    transition: var(--frutiger-transition-smooth);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
-.frutiger-dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--frutiger-deep-blue);
-}
+    /* Effet glossy 3D caractéristique */
+    background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.3) 30%,
+    rgba(255, 255, 255, 0.1) 70%,
+    rgba(0, 0, 0, 0.05) 100%);
 
-/* États de chargement avec animation Frutiger */
-.frutiger-loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--frutiger-glass-border);
-    border-top: 2px solid var(--frutiger-bright-blue);
-    border-radius: var(--frutiger-radius-full);
-    animation: frutiger-spin 1s linear infinite;
-}
+    backdrop-filter: blur(20px) saturate(180%);
 
-.frutiger-loading-large {
-    width: 40px;
-    height: 40px;
-    border-width: 3px;
-}
-
-/* Responsive adaptations */
-@media (max-width: 768px) {
-    .frutiger-modal {
-        margin: var(--frutiger-spacing-md);
-        padding: var(--frutiger-spacing-lg);
-        border-radius: var(--frutiger-radius-xl);
-    }
-
-    .frutiger-search-bar {
-        max-width: 100%;
-    }
-
-    .frutiger-btn {
-        padding: 10px 20px;
-        font-size: 0.8rem;
-    }
-
-    .frutiger-card {
-        padding: var(--frutiger-spacing-md);
-    }
-}
-
-/* Animation keyframes */
-@keyframes frutiger-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes aurora-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-/* Effet de hover global pour l'interactivité */
-.frutiger-interactive {
-    transition: var(--frutiger-transition);
-    cursor: pointer;
-}
-
-.frutiger-interactive:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.05);
-}
-
-/* Focus states améliorés pour l'accessibilité */
-.frutiger-btn:focus-visible,
-.frutiger-input:focus-visible,
-.frutiger-nav-item:focus-visible {
-    outline: 2px solid var(--frutiger-bright-blue);
-    outline-offset: 2px;
-}
-
-/* Animations d'entrée pour les éléments */
-.frutiger-fade-in {
-    animation: frutiger-fade-in 0.3s ease-out;
-}
-
-@keyframes frutiger-fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    /* Ombres multiples pour la profondeur */
+    box-shadow:
+            0 1px 0 rgba(255, 255, 255, 0.8) inset,
+            0 -1px 0 rgba(0, 0, 0, 0.1) inset,
+            0 4px 8px rgba(0, 0, 0, 0.15),
+            0 8px 16px rgba(70, 130, 180, 0.1);
 }
