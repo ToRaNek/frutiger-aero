@@ -1,0 +1,585 @@
+/* frontend/src/styles/components/video-player.css */
+
+/* ================================================
+   LECTEUR VIDÉO FRUTIGER AERO
+   Styles pour le VideoPlayer et ses composants
+   ================================================ */
+
+/* Conteneur principal du lecteur */
+.frutiger-video-player {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-radius: var(--frutiger-radius-xl);
+    overflow: hidden;
+    background: #000;
+    box-shadow: var(--frutiger-shadow-xl);
+    transition: var(--frutiger-transition);
+    outline: none;
+}
+
+.frutiger-video-player.responsive {
+    aspect-ratio: 16/9;
+}
+
+.frutiger-video-player.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: var(--z-modal);
+    border-radius: 0;
+}
+
+.frutiger-video-player.loading {
+    cursor: wait;
+}
+
+/* Élément vidéo */
+.video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Overlay Aurora pour l'ambiance Frutiger */
+.frutiger-video-aurora-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+            ellipse at center,
+            rgba(50, 166, 255, 0.05) 0%,
+            rgba(63, 111, 255, 0.03) 50%,
+            transparent 70%
+    );
+    animation: aurora-video-pulse 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Overlay de chargement */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 5;
+    gap: var(--frutiger-spacing-md);
+}
+
+.loading-overlay span {
+    color: var(--frutiger-white);
+    font-size: 0.875rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Indicateurs de skip */
+.skip-indicators {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    pointer-events: none;
+}
+
+.skip-indicators.forward {
+    left: 70%;
+}
+
+.skip-indicators.backward {
+    left: 30%;
+}
+
+.skip-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--frutiger-spacing-sm);
+    color: var(--frutiger-white);
+    background: rgba(0, 0, 0, 0.7);
+    padding: var(--frutiger-spacing-md);
+    border-radius: var(--frutiger-radius-full);
+    backdrop-filter: blur(10px);
+    animation: skip-indicator-pulse 0.8s ease-out;
+}
+
+.skip-indicator span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes skip-indicator-pulse {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+}
+
+/* Indicateur de buffer */
+.buffer-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 3;
+}
+
+.buffer-bar {
+    height: 100%;
+    background: var(--frutiger-gradient-primary);
+    transition: width 0.3s ease;
+    border-radius: 0 2px 2px 0;
+}
+
+/* Contrôles vidéo */
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--frutiger-spacing-lg);
+    background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.4) 50%,
+            transparent 100%
+    );
+    backdrop-filter: blur(10px);
+    border-radius: 0 0 var(--frutiger-radius-xl) var(--frutiger-radius-xl);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    z-index: 3;
+}
+
+.frutiger-video-player:not(.controls-visible) .video-controls {
+    transform: translateY(100%);
+}
+
+.frutiger-video-player.fullscreen .video-controls {
+    border-radius: 0;
+}
+
+/* Barre de progression */
+.progress-container {
+    position: relative;
+    margin-bottom: var(--frutiger-spacing-md);
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.progress-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--frutiger-radius-full);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-filled {
+    height: 100%;
+    background: var(--frutiger-gradient-primary);
+    border-radius: var(--frutiger-radius-full);
+    position: relative;
+    transition: width 0.1s ease;
+}
+
+.progress-filled::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -6px;
+    width: 12px;
+    height: 12px;
+    background: var(--frutiger-white);
+    border-radius: var(--frutiger-radius-full);
+    transform: translateY(-50%);
+    top: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.progress-container:hover .progress-filled::after {
+    opacity: 1;
+}
+
+.progress-buffered {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: var(--frutiger-radius-full);
+    transition: width 0.3s ease;
+}
+
+/* Preview tooltip */
+.progress-preview {
+    position: absolute;
+    bottom: 100%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    z-index: 5;
+}
+
+/* Contrôles principaux */
+.controls-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--frutiger-spacing-md);
+}
+
+.controls-left,
+.controls-right {
+    display: flex;
+    align-items: center;
+    gap: var(--frutiger-spacing-sm);
+}
+
+.control-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 8px;
+    border-radius: var(--frutiger-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--frutiger-transition);
+}
+
+.control-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.play-btn {
+    min-width: 48px;
+    height: 48px;
+}
+
+/* Volume */
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: var(--frutiger-spacing-sm);
+    position: relative;
+}
+
+.volume-slider {
+    width: 80px;
+    height: 20px;
+    cursor: pointer;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.volume-container:hover .volume-slider {
+    opacity: 1;
+}
+
+.volume-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--frutiger-radius-full);
+    position: relative;
+}
+
+.volume-filled {
+    height: 100%;
+    background: var(--frutiger-gradient-primary);
+    border-radius: var(--frutiger-radius-full);
+    transition: width 0.1s ease;
+}
+
+/* Affichage du temps */
+.time-display {
+    display: flex;
+    align-items: center;
+    gap: var(--frutiger-spacing-xs);
+    color: var(--frutiger-white);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    min-width: 100px;
+}
+
+/* Vitesse de lecture */
+.playback-rate select {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--frutiger-white);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: var(--frutiger-radius-md);
+    font-size: 0.75rem;
+    min-width: 60px;
+}
+
+/* Indicateur de qualité réseau */
+.network-indicator {
+    position: absolute;
+    top: var(--frutiger-spacing-md);
+    right: var(--frutiger-spacing-md);
+    z-index: 4;
+}
+
+.network-dots {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+}
+
+.network-dots .dot {
+    width: 4px;
+    background: var(--frutiger-white);
+    border-radius: var(--frutiger-radius-full);
+    transition: var(--frutiger-transition);
+}
+
+.network-dots .dot:nth-child(1) { height: 8px; }
+.network-dots .dot:nth-child(2) { height: 12px; }
+.network-dots .dot:nth-child(3) { height: 16px; }
+
+.network-indicator.quality-low .dot:nth-child(2),
+.network-indicator.quality-low .dot:nth-child(3) {
+    opacity: 0.3;
+}
+
+.network-indicator.quality-medium .dot:nth-child(3) {
+    opacity: 0.3;
+}
+
+/* Modal des paramètres */
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--frutiger-spacing-lg);
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--frutiger-spacing-md);
+}
+
+.setting-group h4 {
+    color: var(--frutiger-deep-blue);
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.quality-options,
+.speed-options,
+.subtitle-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--frutiger-spacing-sm);
+}
+
+.setting-option {
+    display: flex;
+    align-items: center;
+    gap: var(--frutiger-spacing-sm);
+    padding: var(--frutiger-spacing-sm);
+    border-radius: var(--frutiger-radius-md);
+    cursor: pointer;
+    transition: var(--frutiger-transition);
+}
+
+.setting-option:hover {
+    background: rgba(0, 120, 200, 0.1);
+}
+
+.setting-option input[type="radio"] {
+    margin: 0;
+}
+
+/* Modal de partage */
+.share-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--frutiger-spacing-lg);
+}
+
+.share-option {
+    display: flex;
+    align-items: center;
+    gap: var(--frutiger-spacing-md);
+    padding: var(--frutiger-spacing-md);
+    background: var(--frutiger-glass);
+    border-radius: var(--frutiger-radius-lg);
+}
+
+.share-link {
+    display: flex;
+    gap: var(--frutiger-spacing-sm);
+}
+
+.share-link input {
+    flex: 1;
+}
+
+.share-social h4 {
+    margin-bottom: var(--frutiger-spacing-md);
+    color: var(--frutiger-deep-blue);
+}
+
+.social-buttons {
+    display: flex;
+    gap: var(--frutiger-spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .video-controls {
+        padding: var(--frutiger-spacing-md);
+    }
+
+    .controls-main {
+        flex-direction: column;
+        gap: var(--frutiger-spacing-sm);
+    }
+
+    .controls-left,
+    .controls-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .volume-slider {
+        width: 60px;
+    }
+
+    .time-display {
+        font-size: 0.75rem;
+        min-width: 80px;
+    }
+
+    .control-btn {
+        min-width: 36px;
+        height: 36px;
+    }
+
+    .play-btn {
+        min-width: 44px;
+        height: 44px;
+    }
+}
+
+@media (max-width: 480px) {
+    .video-controls {
+        padding: var(--frutiger-spacing-sm);
+    }
+
+    .progress-container {
+        margin-bottom: var(--frutiger-spacing-sm);
+    }
+
+    .controls-main {
+        gap: var(--frutiger-spacing-xs);
+    }
+
+    .controls-left,
+    .controls-right {
+        gap: var(--frutiger-spacing-xs);
+    }
+
+    .volume-container {
+        display: none; /* Caché sur très petit écran */
+    }
+
+    .playback-rate {
+        display: none; /* Caché sur très petit écran */
+    }
+}
+
+/* États spéciaux */
+.frutiger-video-player:fullscreen .network-indicator {
+    top: var(--frutiger-spacing-xl);
+    right: var(--frutiger-spacing-xl);
+}
+
+.frutiger-video-player:fullscreen .buffer-indicator {
+    height: 4px;
+}
+
+/* Animation de rotation pour le bouton refresh */
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Accessibilité */
+.control-btn:focus-visible {
+    outline: 2px solid var(--frutiger-cyan);
+    outline-offset: 2px;
+}
+
+.progress-container:focus-visible {
+    outline: 2px solid var(--frutiger-cyan);
+    outline-offset: 2px;
+    border-radius: var(--frutiger-radius-sm);
+}
+
+/* Réduire les animations si préférence utilisateur */
+@media (prefers-reduced-motion: reduce) {
+    .frutiger-video-aurora-overlay,
+    .skip-indicator,
+    .spinning {
+        animation: none !important;
+    }
+
+    .control-btn:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .video-controls {
+        background: rgba(0, 0, 0, 0.9);
+    }
+
+    .progress-bar {
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    .control-btn {
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+}
